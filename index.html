@@ -102,22 +102,23 @@
 
     .input-group {
       position: relative;
-      padding: 0 20px 20px;
+      padding: 20px;
       flex-shrink: 0;
     }
 
     .truth-input {
       width: 100%;
-      height: 140px;
+      min-height: 100px;
       background: rgba(0, 0, 0, .3);
       border: 2px solid #facc15;
-      border-radius: 32px;
+      border-radius: 12px;
       color: #fff;
-      padding: 20px;
-      font-size: 18px;
+      padding: 15px;
+      font-size: 16px;
       resize: none;
       outline: none;
       font-family: monospace;
+      margin-bottom: 10px;
     }
 
     .send-btn {
@@ -299,7 +300,6 @@
 <div class="yard"></div>
 
 <div class="forgebar">
-  <button onclick="forge.create('note')" title="Sticky Note">📝</button>
   <button onclick="forge.create('agent')" title="AI Agent">🤖</button>
   <button onclick="forge.create('doc')" title="Document">📄</button>
   <button onclick="forge.clear()" title="Clear All">🗑️</button>
@@ -362,18 +362,19 @@ class Forge {
       <div class="modal-dialog" style="left:20%;top:20%;width:60%;height:75%;">
         <div class="modal-content">
           <div class="modal-header">
-            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : node.type === 'doc' ? 'Document' : 'Note'}</div>
+            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : 'Document'}</div>
             <div class="header-buttons">
-              <button onclick="forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
-              <button onclick="forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
-              <button onclick="forge.remove(${node.id})" title="Close">✕</button>
+              <button onclick="event.stopPropagation(); forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
+              <button onclick="event.stopPropagation(); forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
+              <button onclick="event.stopPropagation(); forge.remove(${node.id})" title="Close">✕</button>
             </div>
           </div>
           <div class="content-area" id="content-${node.id}"></div>
+          ${node.type === 'agent' ? `
           <div class="input-group">
-            <textarea class="truth-input" id="input-${node.id}" placeholder="Ask or write..."></textarea>
+            <textarea class="truth-input" id="input-${node.id}" placeholder="Type your message here..."></textarea>
             <button class="send-btn" onclick="forge.send(${node.id})">➤</button>
-          </div>
+          </div>` : ''}
           <div class="resizer"></div>
         </div>
       </div>`;
@@ -392,7 +393,7 @@ class Forge {
     this.makeScrollable(node);
 
     if (node.type === 'agent') {
-      this.appendMessage(node, 'ai', "I'm ready to assist you. Type your message below.");
+      this.appendMessage(node, 'ai', "I'm ready to assist you. Type your message below and press the send button.");
     }
   }
 
@@ -477,14 +478,19 @@ class Forge {
     try {
       const res = await fetch("https://ai-proxy.ai-n.workers.dev/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify({
           message: query,
           sessionId: this.sessionId
         })
       });
 
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
 
       const data = await res.json();
       const answer = data.response || data.answer || "Sorry, I couldn't generate a response.";
