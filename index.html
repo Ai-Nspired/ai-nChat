@@ -1,1480 +1,208 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.0/marked.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ai-n Forge | Modal Yard — Fixed Exactly As You Asked</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-    .dark-mode {
-      --bg-primary: #121212;
-      --text-primary: #d1d5db;
-      --bg-secondary: #1e1e1e;
-      --text-secondary: #9ca3af;
-    }
-    .light-mode {
-      --bg-primary: #f3f4f6;
-      --text-primary: #1f2937;
-      --bg-secondary: #e5e7eb;
-      --text-secondary: #374151;
-    }
-    .green-mode {
-      --bg-primary: #022c22;
-      --text-primary: #ecfdf5;
-      --bg-secondary: #033a2b;
-      --text-secondary: #a7f3d0;
-    }
-    .blue-mode {
-      --bg-primary: #0c2d4a;
-      --text-primary: #e0f2fe;
-      --bg-secondary: #0e3255;
-      --text-secondary: #bae6fd;
-    }
-    .purple-mode {
-      --bg-primary: #280a4f;
-      --text-primary: #f5f3ff;
-      --bg-secondary: #3b0764;
-      --text-secondary: #ddd6fe;
-    }
-    .quicksilver-mode {
-      --bg-primary: #1c1c1e;
-      --text-primary: #d4d4d8;
-      --bg-secondary: #2c2c2e;
-      --text-secondary: #a1a1aa;
-    }
-    .sunset-mode {
-      --bg-primary: #1e0c15;
-      --text-primary: #ffd4b8;
-      --bg-secondary: #2d1018;
-      --text-secondary: #ffa77b;
-    }
-    .blood-mode {
-      --bg-primary: #fcf7fa;
-      --text-primary: #6a5f76;
-      --bg-secondary: #f0e6f5;
-      --text-secondary: #af89c3;
-    }
-    .pulsate {
-      animation: pulsate 1.5s infinite;
-    }
-    @keyframes pulsate {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
-    .model-dropdown {
-      max-height: 250px;
-      overflow-y: auto;
-    }
-    .model-info {
-      font-size: 0.7rem;
-      color: var(--text-secondary);
-    }
-    .markdown-output {
-      font-family: Georgia, serif;
-      line-height: 1.6;
-      color: var(--text-primary);
-      margin-bottom: 1em;
-    }
-
-    .markdown-output h1, 
-    .markdown-output h2, 
-    .markdown-output h3 {
-      font-weight: normal;
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
-      font-family: Georgia, serif;
-      letter-spacing: -0.01em;
-    }
-
-    .markdown-output h1 {
-      font-size: 1.8em;
-      border-bottom: 1px solid var(--text-secondary);
-      padding-bottom: 0.3em;
-    }
-
-    .markdown-output h2 {
-      font-size: 1.5em;
-      border-bottom: 1px solid var(--text-secondary);
-      padding-bottom: 0.2em;
-    }
-
-    .markdown-output h3 {
-      font-size: 1.3em;
-    }
-
-    .markdown-output p {
-      margin-bottom: 1em;
-    }
-
-    .markdown-output pre {
-      background-color: var(--bg-primary);
-      border-radius: 6px;
-      padding: 16px;
-      overflow: auto;
-      font-family: Consolas, Monaco, 'Andale Mono', monospace;
-      font-size: 0.9em;
-    }
-
-    .markdown-output code {
-      font-family: Consolas, Monaco, 'Andale Mono', monospace;
-      background-color: var(--bg-primary);
-      padding: 0.2em 0.4em;
-      border-radius: 3px;
-      font-size: 0.9em;
-    }
-
-    .markdown-output blockquote {
-      border-left: 4px solid var(--text-secondary);
-      padding-left: 1em;
-      margin-left: 0;
-      color: var(--text-secondary);
-      font-style: italic;
-    }
-
-    .markdown-output ul, 
-    .markdown-output ol {
-      padding-left: 2em;
-      margin-bottom: 1em;
-    }
-
-    .markdown-output li {
-      margin-bottom: 0.5em;
-    }
-
-    .markdown-output hr {
-      border: none;
-      border-top: 1px solid var(--text-secondary);
-      margin: 1.5em 0;
-    }
-
-    .markdown-output a {
-      color: #58a6ff;
-      text-decoration: none;
-    }
-
-    .markdown-output a:hover {
-      text-decoration: underline;
-    }
-
-    .markdown-output table {
-      border-collapse: collapse;
-      margin-bottom: 1em;
-      width: 100%;
-    }
-
-    .markdown-output th, 
-    .markdown-output td {
-      border: 1px solid var(--text-secondary);
-      padding: 8px;
-    }
-
-    .markdown-output th {
-      background-color: var(--bg-primary);
-    }
+    body{background:#000;color:#fff;overflow:hidden;height:100dvh;margin:0;font-family:system-ui}
+    .yard{position:fixed;inset:0;margin:auto;width:92vmin;height:92vmin;border:3px solid rgba(250,204,21,.2);pointer-events:none;z-index:1}
+    .modal-content{background:#000;border:none;display:flex;flex-direction:column;height:100%;padding:0;overflow:hidden}
+    .modal-header{background:rgba(30,30,50,.8);border-bottom:1px solid #facc15;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:move;flex-shrink:0;user-select:none}
+    .modal-title{font-size:28px;font-weight:300;color:#fff;margin:0;flex:1;text-align:center}
+    .content-area{flex:1;overflow-y:auto;padding:20px;background:rgba(10,10,20,.6)}
+    .content-area::-webkit-scrollbar{width:8px}.content-area::-webkit-scrollbar-thumb{background:#facc15;border-radius:4px}
+    .input-group{position:relative;padding:0 20px 20px;flex-shrink:0}
+    .truth-input{width:100%;height:140px;background:rgba(0,0,0,.3);border:2px solid #facc15;border-radius:32px;color:#fff;padding:20px 80px 20px 20px;font-size:18px;resize:none;outline:none;font-family:monospace}
+    .send-btn{position:absolute;right:20px;bottom:20px;width:55px;height:55px;background:#facc15;color:#000;border:none;border-radius:50%;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(250,204,21,.5)}
+    .forgebar{position:fixed;left:12px;top:50%;transform:translateY(-50%);background:rgba(30,30,50,.95);border:2px solid #facc15;border-radius:16px;padding:16px 8px;z-index:1000;display:flex;flex-direction:column;gap:20px;box-shadow:0 0 30px rgba(250,204,21,.4)}
+    .forgebar button{background:transparent;border:none;color:#facc15;font-size:28px;cursor:pointer}
+    .forgebar button:hover{color:#fff;transform:scale(1.2)}
+    #count{writing-mode:vertical-rl;font-weight:900;color:#facc15;font-size:18px}
+    .resizer{position:absolute;bottom:4px;right:4px;width:16px;height:16px;cursor:se-resize;z-index:10}
+    .resizer::after{content:"";position:absolute;inset:0;border:2px solid #facc15;border-top:none;border-left:none}
+    .minimized .content-area,.minimized .input-group,.minimized .resizer{display:none!important}
+    .minimized .modal-dialog{width:max-content!important;height:64px!important;min-width:220px!important}
+    .minimized .modal-header{border-radius:32px;justify-content:center;backdrop-filter:blur(20px);border:2px solid #facc15}
+    .chat-message{margin:12px 0;padding:12px;border-radius:12px;max-width:95%}
+    .user{background:rgba(59,130,246,.2);margin-left:auto;border-left:4px solid #3b82f6}
+    .ai{background:rgba(250,204,21,.15);border-left:4px solid #facc15}
+    .modal-fs .modal-dialog{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important}
   </style>
 </head>
-<body class="dark-mode overflow-hidden m-0 p-0">
-  <!-- Main Chat Interface -->
-  <div class="w-screen h-screen flex flex-col bg-[var(--bg-primary)] text-[var(--text-primary)] p-0 m-0 overflow-hidden">
-    <div class="flex justify-between items-center p-4">
-      <div class="flex">
-        <button id="powerButton" class="w-5 h-5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full flex items-center justify-center"><i class="fas fa-cog text-s"></i></button>
-        <button id="historyButton" class="w-5 h-5 bg-[var(--bg-secondary)] text-[var(--text-primary)] rounded-full ml-2 flex items-center justify-center"><i class="fas fa-history text-s"></i></button>
-      </div>
-    </div>
-    <div id="conversation" class="flex-grow bg-[var(--bg-secondary)] p-5 overflow-y-auto text-5xl"></div>
-    <div class="flex gap-2 p-4">
-      <input id="messageInput" type="text" class="flex-1 rounded-md p-2 text-black" placeholder="Type your message...">
-      <button id="talkButton" class="bg-[var(--bg-secondary)] text-[var(--text-primary)] px-4 py-2 rounded-md text-md whitespace-nowrap">Talk</button>
-    </div>
-  </div>
+<body>
 
-  <!-- Settings Panel -->
-  <div id="applet" class="applet fixed top-0 right-0 w-1/2 h-full shadow-md p-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] transform translate-x-full transition-transform duration-300 overflow-y-auto">
-    <div class="flex justify-between items-center mb-8">
-      <h2 class="text-xl font-bold"></h2>
-      <button id="closeSettings" class="text-xl">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    
-    <!-- Theme Selector -->
-    <div class="mb-4">
-      <label class="block text-xs mb-2">Theme</label>
-      <div class="flex space-x-2">
-        <button id="darkTheme" class="w-8 h-8 rounded-full bg-gray-900 border-2 border-transparent"></button>
-        <button id="lightTheme" class="w-8 h-8 rounded-full bg-gray-200 border-2 border-transparent"></button>
-        <button id="greenTheme" class="w-8 h-8 rounded-full bg-green-900 border-2 border-transparent"></button>
-        <button id="blueTheme" class="w-8 h-8 rounded-full bg-blue-900 border-2 border-transparent"></button>
-        <button id="purpleTheme" class="w-8 h-8 rounded-full bg-purple-900 border-2 border-transparent"></button>
-        <button id="quicksilverTheme" class="w-8 h-8 rounded-full bg-zinc-800 border-2 border-transparent"></button>
-        <button id="sunsetTheme" class="w-8 h-8 rounded-full bg-orange-950 border-2 border-transparent"></button>
-        <button id="bloodTheme" class="w-8 h-8 rounded-full bg-red-950 border-2 border-transparent"></button>
-      </div>
-    </div>
-    
-    <!-- OpenRouter API Info - Fix the broken structure -->
-    <div class="mb-4 p-2 bg-[var(--bg-primary)] rounded-md">
-      <label class="block text-xs mb-1">API Key</label>
-      <input id="apiKey" type="password" class="w-full border rounded-md p-1 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="Enter your OpenRouter API key">
-      <div id="apiKeyStatus" class="text-xs mt-1 hidden"></div>
-      <button id="validateApiKey" class="mt-1 px-2 py-1 rounded-md bg-blue-600 text-white text-xs">Validate Key</button>
-    </div>
-    
-    <!-- Model Selection -->
-    <div class="mb-4 p-2 bg-[var(--bg-primary)] rounded-md">
-      <div class="flex justify-between items-center mb-2">
-        <label class="block text-xs">AI Model</label>
-        <button id="addModelBtn" class="text-xs px-2 py-1 bg-green-600 text-white rounded">Add Model</button>
-      </div>
-      <select id="modelSelect" class="w-full border rounded-md p-1 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm model-dropdown">
-        <option value="">Select a model</option>
-        
-        <optgroup label="ai-n picks" id="Models">
-          <option value="liquid/lfm-7b">liquid(7b)- fast and almost free</option>
-          <option value="mistralai/mistral-7b-instruct">mistral(7b)- function calls</option>
-          <option value="perplexity/llama-3.1-sonar-small-128k-online">perplexity- almost free</option>
-          <option value="deepseek/deepseek-r1-distill-llama-8b">DeepSeek R1- the thinker</option>
-          <option value="openai/gpt-4o-mini">ming(4o-mini)- the one that started it all</option>
-          <option value="anthropic/claude-3-haiku">claude(3-haiku)- the coding savant</option>
-          <option value="meta-llama/llama-3-8b-instruct">llama(8b)- the strategist</option>
-          <option value="google/gemini-pro">gemini-pro- it's google</option>
-        </optgroup>
-        
-              
-        <optgroup label="Custom Models" id="customModelsGroup">
-          <!-- Custom models will be added here -->
-        </optgroup>
-        
-        <option value="custom">Add Custom Model...</option>
-      </select>
-      <div id="customModelContainer" class="mt-2 hidden">
-        <input id="customModel" type="text" class="w-full border rounded-md p-1 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="Enter model identifier">
-        <input id="customModelDisplay" type="text" class="w-full border rounded-md p-1 mt-1 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="Display name (optional)">
-        <button id="saveCustomModel" class="mt-1 px-2 py-1 rounded-md bg-green-600 text-white text-xs">Save Model</button>
-      </div>
-      <div id="modelManageContainer" class="mt-2 hidden">
-        <p class="text-xs mb-1">Manage models:</p>
-        <button id="deleteModelBtn" class="px-2 py-1 rounded-md bg-red-600 text-white text-xs">Delete Selected</button>
-      </div>
-    </div>
-    
-    <!-- User Instructions -->
-    <div class="mb-2">
-      <label class="block text-xs mb-1">System Instructions</label>
-      <textarea id="userInfo" class="w-full border rounded-md p-1 h-16 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="What you know about me"></textarea>
-    </div>
-    <div class="mb-2">
-      <label class="block text-xs mb-1">Response Style</label>
-      <textarea id="responseInstructions" class="w-full border rounded-md p-1 h-16 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="How you respond"></textarea>
-    </div>
-    
-    <!-- AI Notes -->
-    <div class="mb-2">
-      <label class="block text-xs mb-1">AI Notes</label>
-      <textarea id="aiNotes" class="w-full border rounded-md p-1 h-16 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="AI Notes"></textarea>
-    </div>
-    
-    <!-- Preserved Content -->
-    <div class="mb-2">
-      <label class="block text-xs mb-1">Preserved Content</label>
-      <textarea id="preservedContent" class="w-full border rounded-md p-1 h-16 bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm" placeholder="Content that will always be preserved across updates"></textarea>
-    </div>
-    
-    <!-- Options -->
-    <div class="mb-4">
-      <label class="flex items-center text-sm">
-        <input id="aiSpeechToggle" type="checkbox" class="mr-2"> Enable AI Speech
-      </label>
-    </div>
-    
-    <!-- Add this in the Options section of the settings panel -->
-    <div class="mb-4">
-      <label class="flex items-center text-sm">
-        <input id="markdownToggle" type="checkbox" class="mr-2"> Use Elegant Markdown Style
-      </label>
-    </div>
-    
-    <!-- Add this to the Options section in the settings panel -->
-    <div class="mb-4">
-      <label class="flex items-center text-sm">
-        <input id="elegantModeToggle" type="checkbox" class="mr-2"> Use Elegant Typography (Georgia font)
-      </label>
-    </div>
-    
-    <!-- Text Size -->
-    <div class="flex justify-between mt-2 mb-4">
-      <span class="text-xs">Text Size</span>
-      <div>
-        <button id="decreaseTextSize" class="px-2 py-1 rounded-md bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm">-</button>
-        <button id="increaseTextSize" class="px-2 py-1 rounded-md bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm">+</button>
-      </div>
-    </div>
-    
-    <button id="saveSettings" class="w-full mt-2 px-2 py-1 rounded-md bg-green-600 text-white text-sm">Save Settings</button>
-    <div class="mt-4 text-center text-xs">
-      <p>Created by <a href="https://Ai-Nspired.com" target="_blank" class="text-blue-400">Ai-N</a></p>
-    </div>
-  </div>
+<div class="yard"></div>
 
-  <!-- Add Model Dialog -->
-  <div id="addModelDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10 hidden">
-    <div class="bg-[var(--bg-primary)] text-[var(--text-primary)] p-4 rounded-md w-80">
-      <h3 class="text-lg font-bold mb-4">Add New Model</h3>
-      <p class="text-sm mb-4">Copy and paste the model ID from OpenRouter and add a display name:</p>
-      <div class="mb-2">
-        <label class="block text-xs mb-1">Model ID</label>
-        <input id="newModelId" type="text" class="w-full border rounded-md p-1 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm" placeholder="e.g., openai/gpt-4-32k">
-      </div>
-      <div class="mb-4">
-        <label class="block text-xs mb-1">Display Name</label>
-        <input id="newModelName" type="text" class="w-full border rounded-md p-1 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm" placeholder="e.g., GPT-4 32K">
-      </div>
-      <div class="mb-4">
-        <label class="block text-xs mb-1">Category</label>
-        <select id="newModelCategory" class="w-full border rounded-md p-1 bg-[var(--bg-secondary)] text-[var(--text-primary)] text-sm">
-          <option value="Models">Free Models</option>
-          <option value="openaiModels">OpenAI</option>
-          <option value="anthropicModels">Anthropic</option>
-          <option value="googleModels">Google</option>
-          <option value="deepseekModels">DeepSeek</option>
-          <option value="otherModels">Other Premium Models</option>
-          <option value="customModelsGroup" selected>Custom Models</option>
-        </select>
-      </div>
-      <div class="flex justify-end">
-        <button id="cancelAddModel" class="px-2 py-1 rounded-md bg-gray-600 text-white text-sm mr-2">Cancel</button>
-        <button id="confirmAddModel" class="px-2 py-1 rounded-md bg-green-600 text-white text-sm">Add Model</button>
-      </div>
-    </div>
-  </div>
+<div class="forgebar">
+  <button onclick="forge.create('note')">Sticky</button>
+  <button onclick="forge.create('agent')">Robot</button>
+  <button onclick="forge.create('doc')">Document</button>
+  <button onclick="forge.clear()">Trash</button>
+  <div id="count">0</div>
+</div>
 
-  <!-- History Panel -->
-  <div id="history" class="history fixed top-0 left-0 w-80 h-full shadow-md p-4 bg-[var(--bg-secondary)] text-[var(--text-primary)] transform -translate-x-full transition-transform duration-300 overflow-y-auto">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-sm font-bold">Chat History</h2>
-      <button id="closeHistory" class="text-xl">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div id="historyList" class="overflow-y-auto mb-4">
-      <!-- Chat history items will be appended here -->
-    </div>
-    <div class="flex justify-between">
-      <button id="copyHistory" class="px-2 py-1 rounded-md bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm">Copy</button>
-      <button id="exportHistory" class="px-2 py-1 rounded-md bg-[var(--bg-primary)] text-[var(--text-primary)] text-sm">Export</button>
-      <button id="clearHistory" class="px-2 py-1 rounded-md bg-red-600 text-white text-sm">Clear</button>
-    </div>
-  </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+class Forge {
+  constructor() {
+    this.nodes = [];
+    this.z = 1000;
+    this.sessionId = crypto.randomUUID();
+  }
 
-  <!-- External Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.0.0/marked.min.js"></script>
+  create(type) {
+    const id = Date.now();
+    const node = { id, type, sessionId: this.sessionId };
+    this.nodes.push(node);
+    this.render(node);
+  }
 
-  <!-- Main Application Script -->
-  <script>
-    // ====================
-    // DOM Element Connectors
-    // ====================
-    const talkButton = document.getElementById('talkButton');
-    const messageInput = document.getElementById('messageInput');
-    const conversation = document.getElementById('conversation');
-    const powerButton = document.getElementById('powerButton');
-    const historyButton = document.getElementById('historyButton');
-    const applet = document.getElementById('applet');
-    const closeSettings = document.getElementById('closeSettings');
-    const history = document.getElementById('history');
-    const closeHistory = document.getElementById('closeHistory');
-    const historyList = document.getElementById('historyList');
-    const copyHistory = document.getElementById('copyHistory');
-    const exportHistory = document.getElementById('exportHistory');
-    const clearHistory = document.getElementById('clearHistory');
-    const saveSettings = document.getElementById('saveSettings');
-    const decreaseTextSize = document.getElementById('decreaseTextSize');
-    const increaseTextSize = document.getElementById('increaseTextSize');
-    const preservedContentInput = document.getElementById('preservedContent');
-    const aiSpeechToggle = document.getElementById('aiSpeechToggle');
-    const apiKeyInput = document.getElementById('apiKey');
-    const validateApiKeyButton = document.getElementById('validateApiKey');
-    const apiKeyStatus = document.getElementById('apiKeyStatus');
-    const modelSelect = document.getElementById('modelSelect');
-    const customModelContainer = document.getElementById('customModelContainer');
-    const customModelInput = document.getElementById('customModel');
-    const customModelDisplay = document.getElementById('customModelDisplay');
-    const saveCustomModel = document.getElementById('saveCustomModel');
-    const userInfoInput = document.getElementById('userInfo');
-    const responseInstructionsInput = document.getElementById('responseInstructions');
-    const aiNotesInput = document.getElementById('aiNotes');
-    const addModelBtn = document.getElementById('addModelBtn');
-    const deleteModelBtn = document.getElementById('deleteModelBtn');
-    const modelManageContainer = document.getElementById('modelManageContainer');
-    const customModelsGroup = document.getElementById('customModelsGroup');
-    
-    // Add Model Dialog Elements
-    const addModelDialog = document.getElementById('addModelDialog');
-    const newModelId = document.getElementById('newModelId');
-    const newModelName = document.getElementById('newModelName');
-    const newModelCategory = document.getElementById('newModelCategory');
-    const confirmAddModel = document.getElementById('confirmAddModel');
-    const cancelAddModel = document.getElementById('cancelAddModel');
-    
-    // Theme Buttons
-    const darkTheme = document.getElementById('darkTheme');
-    const lightTheme = document.getElementById('lightTheme');
-    const greenTheme = document.getElementById('greenTheme');
-    const blueTheme = document.getElementById('blueTheme');
-    const purpleTheme = document.getElementById('purpleTheme');
-    const quicksilverTheme = document.getElementById('quicksilverTheme');
-    const sunsetTheme = document.getElementById('sunsetTheme');
-    const bloodTheme = document.getElementById('bloodTheme');
-    
-    // DOM Element Connectors - add this
-    const markdownToggle = document.getElementById('markdownToggle');
-    // Add to DOM Element Connectors section
-    const elegantModeToggle = document.getElementById('elegantModeToggle');
+  render(node) {
+    const modalDiv = document.createElement('div');
+    modalDiv.className = 'modal';
+    modalDiv.id = `m-${node.id}`;
+    modalDiv.style.zIndex = this.z++;
 
-    // ====================
-    // State Variables
-    // ====================
-    const baseUrl = 'https://openrouter.ai/api/v1'; // Fixed for OpenRouter
-    let apiKey = '';
-    let preferredModel = '';
-    let userInfo = '';
-    let responseInstructions = '';
-    let textSize = 16;
-    let recognizing = false;
-    let recognition;
-    let currentUtterance = null;
-    let aiSpeechEnabled = true;
-    let chatHistory = JSON.parse(localStorage.getItem('chatHistory')) || [];
-    let aiNotes = localStorage.getItem('aiNotes') || '';
-    let preservedContent = localStorage.getItem('preservedContent') || '';
-    let isApiKeyValid = false;
-    let customModels = JSON.parse(localStorage.getItem('customModels')) || [];
-    let currentTheme = localStorage.getItem('theme') || 'dark-mode';
-    const maxTokens = 2000;
-    let tokenCount = 0;
-    let messageHistory = [];
-    
-    // State Variables - add this
-    let markdownEnabled = localStorage.getItem('markdownEnabled') === 'true';
-    // Add to State Variables section
-    let elegantModeEnabled = localStorage.getItem('elegantModeEnabled') === 'true';
+    modalDiv.innerHTML = `
+      <div class="modal-dialog" style="position:absolute;left:20vmin;top:20vmin;width:60vmin;height:75vmin;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : 'Note'}</div>
+            <div>
+              <button class="btn btn-sm text-warning" onclick="forge.toggleMinimize(${node.id})">Minimize</button>
+              <button class="btn btn-sm text-white" onclick="forge.toggleFS(${node.id})">Fullscreen</button>
+              <button class="btn btn-sm text-danger" onclick="forge.remove(${node.id})">Close</button>
+            </div>
+          </div>
+          <div class="content-area" id="content-${node.id}"></div>
+          <div class="input-group">
+            <textarea class="truth-input" id="input-${node.id}" placeholder="Ask or write..."></textarea>
+            <button class="send-btn" onclick="forge.send(${node.id})">Send</button>
+          </div>
+          <div class="resizer"></div>
+        </div>
+      </div>`;
 
-    // ====================
-    // Theme Management
-    // ====================
-    function setTheme(themeName) {
-      // Remove all possible theme classes
-      document.body.classList.remove(
-        'dark-mode', 'light-mode', 'green-mode', 'blue-mode', 'purple-mode', 
-        'quicksilver-mode', 'sunset-mode', 'blood-mode'
-      );
-      // Add the selected theme
-      document.body.classList.add(themeName);
-      localStorage.setItem('theme', themeName);
-      currentTheme = themeName;
-      
-      // Update theme selection indicators (borders)
-      updateThemeSelectionIndicators();
+    document.body.appendChild(modalDiv);
+    const modal = new bootstrap.Modal(modalDiv, { backdrop: false, keyboard: false });
+    modal.show();
+
+    node.modal = modal;
+    node.contentEl = modalDiv.querySelector(`#content-${node.id}`);
+    node.input = modalDiv.querySelector(`#input-${node.id}`);
+    node.dialog = modalDiv.querySelector('.modal-dialog');
+
+    this.makeDraggable(node);
+    this.makeResizable(node);
+    this.makeScrollable(node);
+
+    if (node.type === 'agent') {
+      this.appendMessage(node, 'ai', "I'm connected to your real ai-proxy.");
     }
-    
-    function updateThemeSelectionIndicators() {
-      // Remove all selection borders
-      darkTheme.classList.remove('border-white');
-      lightTheme.classList.remove('border-black');
-      greenTheme.classList.remove('border-white');
-      blueTheme.classList.remove('border-white');
-      purpleTheme.classList.remove('border-white');
-      quicksilverTheme.classList.remove('border-white');
-      sunsetTheme.classList.remove('border-white');
-      bloodTheme.classList.remove('border-white');
-      
-      // Add border to current theme
-      switch(currentTheme) {
-        case 'dark-mode':
-          darkTheme.classList.add('border-white');
-          break;
-        case 'light-mode':
-          lightTheme.classList.add('border-black');
-          break;
-        case 'green-mode':
-          greenTheme.classList.add('border-white');
-          break;
-        case 'blue-mode':
-          blueTheme.classList.add('border-white');
-          break;
-        case 'purple-mode':
-          purpleTheme.classList.add('border-white');
-          break;
-        case 'quicksilver-mode':
-          quicksilverTheme.classList.add('border-white');
-          break;
-        case 'sunset-mode':
-          sunsetTheme.classList.add('border-white');
-          break;
-        case 'blood-mode':
-          bloodTheme.classList.add('border-white');
-          break;
-      }
-    }
+  }
 
-    // ====================
-    // Custom Model Management
-    // ====================
-    function loadCustomModels() {
-      // Clear existing custom model options
-      while (customModelsGroup.firstChild) {
-        customModelsGroup.removeChild(customModelsGroup.firstChild);
-      }
-      
-      // Add each custom model from storage
-      customModels.forEach(model => {
-        const option = document.createElement('option');
-        option.value = model.id;
-        option.textContent = model.name || model.id;
-        option.dataset.custom = 'true';
-        
-        // Add to the appropriate category group if specified
-        if (model.category && model.category !== 'customModelsGroup') {
-          const categoryGroup = document.getElementById(model.category);
-          if (categoryGroup) {
-            categoryGroup.appendChild(option);
-            return;
-          }
-        }
-        
-        // Default to custom model
-             // Default to custom models group
-        customModelsGroup.appendChild(option);
+  appendMessage(node, role, text) {
+    const div = document.createElement('div');
+    div.className = `chat-message ${role}`;
+    div.innerHTML = marked.parse(text);
+    node.contentEl.appendChild(div);
+    node.contentEl.scrollTop = node.contentEl.scrollHeight;
+  }
+
+  async send(id) {
+    const node = this.nodes.find(n => n.id === id);
+    if (!node) return;
+    const query = node.input.value.trim();
+    if (!query) return;
+
+    this.appendMessage(node, 'user', query);
+    node.input.value = '';
+    this.appendMessage(node, 'ai', 'thinking...');
+
+    try {
+      const res = await fetch("https://ai-proxy.ai-n.workers.dev/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: query, sessionId: this.sessionId })
       });
+      const data = await res.json();
+      const answer = data.response || data.answer || "no response";
+
+      node.contentEl.lastChild.innerHTML = marked.parse(answer);
+      node.contentEl.scrollTop = node.contentEl.scrollHeight;
+
+    } catch (e) {
+      node.contentEl.lastChild.textContent = "error: " + e.message;
     }
-    
-    function saveCustomModelsToStorage() {
-      localStorage.setItem('customModels', JSON.stringify(customModels));
-    }
-    
-    function addCustomModel(id, name, category = 'customModelsGroup') {
-      // Check if model already exists
-      const existingModel = customModels.find(model => model.id === id);
-      if (existingModel) {
-        alert('This model ID already exists in your list');
-        return false;
-      }
-      
-      // Add to our custom models array
-      customModels.push({
-        id: id,
-        name: name || id, // Use ID as name if no name provided
-        category: category
-      });
-      
-      // Save to localStorage
-      saveCustomModelsToStorage();
-      
-      // Reload the dropdown
-      loadCustomModels();
-      return true;
-    }
-    
-    function deleteSelectedModel() {
-      const selectedOption = modelSelect.options[modelSelect.selectedIndex];
-      const modelId = selectedOption.value;
-      
-      // Check if it's a custom model
-      const modelIndex = customModels.findIndex(model => model.id === modelId);
-      if (modelIndex === -1) {
-        alert('You can only delete custom models');
-        return;
-      }
-      
-      // Confirm deletion
-      if (confirm(`Are you sure you want to delete the model "${selectedOption.textContent}"?`)) {
-        // Remove from array
-        customModels.splice(modelIndex, 1);
-        // Save to localStorage
-        saveCustomModelsToStorage();
-        // Reload the dropdown
-        loadCustomModels();
-        // Reset selection
-        modelSelect.value = '';
-        // Hide manage controls
-        modelManageContainer.classList.add('hidden');
-      }
-    }
-
-    // ====================
-    // Speech Recognition Setup
-    // ====================
-    if ('webkitSpeechRecognition' in window) {
-      recognition = new webkitSpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-
-      recognition.onstart = function() {
-        recognizing = true;
-        talkButton.textContent = 'Stop';
-      };
-
-      recognition.onend = function() {
-        recognizing = false;
-        updateTalkButtonText();
-      };
-
-      recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        messageInput.value = transcript;
-        addMessage();
-      };
-    } else {
-      console.warn('Speech recognition not supported in this browser.');
-    }
-
-    // ====================
-    // OpenRouter API Key Validation
-    // ====================
-    async function validateApiKey(key) {
-      if (!key) {
-        updateApiKeyStatus('Please enter an API key', false);
-        return false;
-      }
-
-      try {
-        // Simple validation request to OpenRouter
-        const response = await fetch(`${baseUrl}/models`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${key}`
-          }
-        });
-
-        if (response.ok) {
-          updateApiKeyStatus('API key is valid!', true);
-          return true;
-        } else {
-          updateApiKeyStatus('Invalid API key', false);
-          return false;
-        }
-      } catch (error) {
-        updateApiKeyStatus('Error validating API key', false);
-        console.error('Validation error:', error);
-        return false;
-      }
-    }
-
-    function updateApiKeyStatus(message, isValid) {
-      apiKeyStatus.textContent = message;
-      apiKeyStatus.classList.remove('hidden', 'text-green-500', 'text-red-500');
-      apiKeyStatus.classList.add(isValid ? 'text-green-500' : 'text-red-500');
-      isApiKeyValid = isValid;
-    }
-
-    // ====================
-    // AI Environment Control Functions
-    // ====================
-    function processAiControlCommands(aiResponse) {
-      let updatedResponse = aiResponse;
-      
-      // Check for system prompt updates
-      if (aiResponse.includes('[[SYSTEM:')) {
-        const systemMatch = aiResponse.match(/\[\[SYSTEM:(.*?)\]\]/s);
-        if (systemMatch && systemMatch[1]) {
-          // Set the new user info WITHOUT modifying the preserved content
-          userInfo = systemMatch[1].trim();
-          userInfoInput.value = userInfo;
-          localStorage.setItem('userInfo', userInfo);
-          updatedResponse = updatedResponse.replace(/\[\[SYSTEM:(.*?)\]\]/s, '*System prompt updated*\n\n');
-        }
-      }
-      
-      // Check for response instruction updates
-      if (aiResponse.includes('[[RESPOND:')) {
-        const respondMatch = aiResponse.match(/\[\[RESPOND:(.*?)\]\]/s);
-        if (respondMatch && respondMatch[1]) {
-          // Set the new response instructions WITHOUT modifying the preserved content
-          responseInstructions = respondMatch[1].trim();
-          responseInstructionsInput.value = responseInstructions;
-          localStorage.setItem('responseInstructions', responseInstructions);
-          updatedResponse = updatedResponse.replace(/\[\[RESPOND:(.*?)\]\]/s, '*Response instructions updated*\n\n');
-        }
-      }
-      
-      // Check for note updates
-      if (aiResponse.includes('[[NOTE:')) {
-        const noteMatch = aiResponse.match(/\[\[NOTE:(.*?)\]\]/s);
-        if (noteMatch && noteMatch[1]) {
-          // Set the new notes WITHOUT modifying the preserved content
-          aiNotes = noteMatch[1].trim();
-          aiNotesInput.value = aiNotes;
-          localStorage.setItem('aiNotes', aiNotes);
-          updatedResponse = updatedResponse.replace(/\[\[NOTE:(.*?)\]\]/s, '*Note saved*\n\n');
-        }
-      }
-      
-      return updatedResponse;
-    }
-
-    // ====================
-    // Core Message Handling
-    // ====================
-    async function addMessage() {
-      const message = messageInput.value.trim();
-      if (message) {
-        // Handle model commands
-        if (message.toLowerCase().startsWith('add model')) {
-          showAddModelDialog();
-          messageInput.value = '';
-          return;
-        }
-        
-        // Handle delete model commands
-        if (message.toLowerCase().startsWith('delete model')) {
-          const modelToDelete = message.substring(12).trim();
-          const modelOption = Array.from(modelSelect.options).find(option => 
-            option.textContent.toLowerCase().includes(modelToDelete.toLowerCase()) || 
-            option.value.toLowerCase().includes(modelToDelete.toLowerCase())
-          );
-          
-          if (modelOption) {
-            modelSelect.value = modelOption.value;
-            deleteSelectedModel();
-          } else {
-            addNotificationMessage(`Could not find model "${modelToDelete}" to delete.`, 'red');
-          }
-          
-          messageInput.value = '';
-          return;
-        }
-        
-        // Check if API key is configured
-        if (!apiKey) {
-          addNotificationMessage('Please configure your OpenRouter API key in settings', 'red');
-          return;
-        }
-
-        // Check if model is selected
-        if (!preferredModel) {
-          addNotificationMessage('Please select a model in settings', 'red');
-          return;
-        }
-
-        const messageElement = document.createElement('p');
-        messageElement.textContent = message;
-        messageElement.classList.add('user-message', 'mb-2', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
-        conversation.appendChild(messageElement);
-        messageInput.value = '';
-        conversation.scrollTop = conversation.scrollHeight;
-
-        const thinkingElement = document.createElement('p');
-        thinkingElement.textContent = 'AI is thinking...';
-        thinkingElement.classList.add('thinking-message', 'text-[var(--text-secondary)]', 'italic');
-        conversation.appendChild(thinkingElement);
-        conversation.scrollTop = conversation.scrollHeight;
-
-        powerButton.classList.add('pulsate');
-
-        try {
-          // Check for direct control commands
-          let aiResponseContent = '';
-          
-          if (message.startsWith('/system ')) {
-            // Update system prompt
-            userInfo = message.substring(8);
-            userInfoInput.value = userInfo;
-            localStorage.setItem('userInfo', userInfo);
-            aiResponseContent = "System prompt updated successfully.";
-          } 
-          else if (message.startsWith('/respond ')) {
-            // Update response instructions
-            responseInstructions = message.substring(9);
-            responseInstructionsInput.value = responseInstructions;
-            localStorage.setItem('responseInstructions', responseInstructions);
-            aiResponseContent = "Response instructions updated successfully.";
-          }
-          else if (message.startsWith('/note ')) {
-            // Save AI notes
-            aiNotes = message.substring(6);
-            aiNotesInput.value = aiNotes;
-            localStorage.setItem('aiNotes', aiNotes);
-            aiResponseContent = "Note saved successfully.";
-          }
-          else {
-            // Regular API call
-            const payload = {
-              model: preferredModel,
-              messages: [
-                { 
-                  role: "system", 
-                  content: `What you know about me: ${userInfo}
-How you will respond: ${responseInstructions}
-
-${preservedContent ? `Preserved content: ${preservedContent}
-
-` : ''}AI Notes:
-1. Update system prompts with [[SYSTEM:your new prompt]]
-2. Update response instructions with [[RESPOND:your new instructions]]
-3. Save notes with [[NOTE:your note content]]
-4. ALWAYS review preserved content, userInfo, responseInstructions and prior messages before responding as they will guide your response.
-
-Current notes: ${aiNotes || "No notes yet."}`
-                },
-                { role: "user", content: message }
-              ]
-            };
-
-            console.log('Sending request to OpenRouter:', payload);
-
-            const response = await fetch(`${baseUrl}/chat/completions`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-              },
-              body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-              const errorText = await response.text();
-              throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-            }
-
-            const data = await response.json();
-            console.log('Response from OpenRouter:', data);
-            
-            aiResponseContent = data.choices[0].message.content.trim();
-            
-            // Process any environment control commands in the AI response
-            aiResponseContent = processAiControlCommands(aiResponseContent);
-          }
-
-          // Remove the thinking element
-          conversation.removeChild(thinkingElement);
-          
-          const aiMessageElement = document.createElement('div');
-          aiMessageElement.classList.add('ai-message', 'mb-4', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
-
-          // Create a container for the AI response content
-          const contentContainer = document.createElement('div');
-          if (elegantModeEnabled) {
-            contentContainer.classList.add('markdown-output');
-          }
-          contentContainer.innerHTML = marked(aiResponseContent);
-          aiMessageElement.appendChild(contentContainer);
-
-          // Create action buttons container
-          const actionButtonsContainer = document.createElement('div');
-          actionButtonsContainer.classList.add('flex', 'gap-2', 'justify-end', 'mt-2', 'text-xs', 'text-[var(--text-secondary)]');
-
-          // Create copy button
-          const copyButton = document.createElement('button');
-          copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-          copyButton.title = "Copy response";
-          copyButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
-          copyButton.addEventListener('click', () => {
-            // Strip markdown and copy plain text
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = contentContainer.innerHTML;
-            const text = tempDiv.textContent || tempDiv.innerText || "";
-            navigator.clipboard.writeText(text).then(() => {
-              addNotificationMessage('Response copied to clipboard', 'green');
-            });
-          });
-
-          // Create speak button
-          const speakButton = document.createElement('button');
-          speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-          speakButton.title = "Read aloud";
-          speakButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
-          speakButton.addEventListener('click', () => {
-            // Clean up any special syntax
-            const speechText = aiResponseContent
-              .replace(/\[\[SYSTEM:.*?\]\]/gs, '')
-              .replace(/\[\[RESPOND:.*?\]\]/gs, '')
-              .replace(/\[\[NOTE:.*?\]\]/gs, '')
-              .replace(/```[\s\S]*?```/g, 'Code block omitted for speech.')
-              .trim();
-            
-            // Cancel any ongoing speech
-            if (currentUtterance) {
-              speechSynthesis.cancel();
-            }
-            
-            currentUtterance = new SpeechSynthesisUtterance(speechText);
-            speechSynthesis.speak(currentUtterance);
-            addNotificationMessage('Reading response aloud', 'blue');
-          });
-
-          // Create delete button
-          const deleteButton = document.createElement('button');
-          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-          deleteButton.title = "Delete message";
-          deleteButton.classList.add('hover:text-red-500', 'transition-colors');
-          deleteButton.addEventListener('click', () => {
-            if (confirm('Delete this message?')) {
-              conversation.removeChild(aiMessageElement);
-              
-              // Find and remove the user message that came before this response
-              const messages = Array.from(conversation.children);
-              const aiMessageIndex = messages.indexOf(aiMessageElement);
-              if (aiMessageIndex > 0 && messages[aiMessageIndex - 1].classList.contains('user-message')) {
-                conversation.removeChild(messages[aiMessageIndex - 1]);
-              }
-              
-              addNotificationMessage('Message deleted', 'red');
-            }
-          });
-
-          // Add buttons to container
-          actionButtonsContainer.appendChild(copyButton);
-          actionButtonsContainer.appendChild(speakButton);
-          actionButtonsContainer.appendChild(deleteButton);
-
-          // Add action buttons to message
-          aiMessageElement.appendChild(actionButtonsContainer);
-
-          // Add to conversation
-          conversation.appendChild(aiMessageElement);
-          conversation.scrollTop = conversation.scrollHeight;
-
-          // Only save regular conversations to history
-          if (!message.startsWith('/')) {
-            saveToHistory(message, aiResponseContent);
-          }
-
-          if (aiSpeechEnabled) {
-            // Clean up any special control syntax for speech
-            const speechText = aiResponseContent
-              .replace(/\[\[SYSTEM:.*?\]\]/gs, '')
-              .replace(/\[\[RESPOND:.*?\]\]/gs, '')
-              .replace(/\[\[NOTE:.*?\]\]/gs, '')
-              .trim();
-            
-            currentUtterance = new SpeechSynthesisUtterance(speechText);
-            currentUtterance.onend = () => {
-              if (talkButton.textContent === 'Stop') {
-                talkButton.click(); // Only click if it's in stop mode
-              }
-            };
-            speechSynthesis.speak(currentUtterance);
-          }
-        } catch (error) {
-          console.error('Error:', error);
-          conversation.removeChild(thinkingElement);
-          
-          addNotificationMessage(`Error: ${error.message}`, 'red');
-        } finally {
-          powerButton.classList.remove('pulsate');
-        }
-      }
-    }
-    
-    function addNotificationMessage(message, color = 'green') {
-      const notificationElement = document.createElement('p');
-      notificationElement.textContent = message;
-      notificationElement.style.color = color;
-      notificationElement.classList.add('notification-message', 'mb-2');
-      conversation.appendChild(notificationElement);
-      conversation.scrollTop = conversation.scrollHeight;
-      
-      // Remove notification after 5 seconds
-      setTimeout(() => {
-        if (conversation.contains(notificationElement)) {
-          conversation.removeChild(notificationElement);
-        }
-      }, 5000);
-    }
-
-    // ====================
-    // History Management
-    // ====================
-    function saveToHistory(userMessage, aiMessage) {
-      const timestamp = new Date().toLocaleString();
-      chatHistory.push({ timestamp, userMessage, aiMessage });
-      localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-    }
-
-    function loadChatHistory() {
-      historyList.innerHTML = '';
-      
-      if (chatHistory.length === 0) {
-        const emptyMessage = document.createElement('p');
-        emptyMessage.textContent = 'No chat history yet';
-        emptyMessage.classList.add('text-center', 'text-[var(--text-secondary)]', 'italic', 'my-4');
-        historyList.appendChild(emptyMessage);
-        return;
-      }
-      
-      chatHistory.forEach((chat, index) => {
-        const chatItem = document.createElement('div');
-        chatItem.classList.add('mb-3', 'p-2', 'bg-[var(--bg-primary)]', 'rounded-md', 'cursor-pointer', 'hover:bg-opacity-80');
-        chatItem.innerHTML = `
-          <p class="text-xs text-[var(--text-secondary)]">${chat.timestamp}</p>
-          <p class="text-sm font-bold mt-1">${chat.userMessage.substring(0, 30)}${chat.userMessage.length > 30 ? '...' : ''}</p>
-        `;
-        
-        // Add click event to load this conversation
-        chatItem.addEventListener('click', () => {
-          // Add the conversation to the main chat area
-          conversation.innerHTML = '';
-          
-          const userMessageElement = document.createElement('p');
-          userMessageElement.textContent = chat.userMessage;
-          userMessageElement.classList.add('user-message', 'mb-2', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
-          
-          const aiMessageElement = document.createElement('div');
-          aiMessageElement.classList.add('ai-message', 'mb-4', 'pb-2', 'border-b', 'border-[var(--text-secondary)]');
-
-          // Create a container for the AI response content
-          const contentContainer = document.createElement('div');
-          if (elegantModeEnabled) {
-            contentContainer.classList.add('markdown-output');
-          }
-          contentContainer.innerHTML = marked(chat.aiMessage);
-          aiMessageElement.appendChild(contentContainer);
-
-          // Create action buttons container
-          const actionButtonsContainer = document.createElement('div');
-          actionButtonsContainer.classList.add('flex', 'gap-2', 'justify-end', 'mt-2', 'text-xs', 'text-[var(--text-secondary)]');
-
-          // Copy button
-          const copyButton = document.createElement('button');
-          copyButton.innerHTML = '<i class="fas fa-copy"></i>';
-          copyButton.title = "Copy response";
-          copyButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
-          copyButton.addEventListener('click', () => {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = contentContainer.innerHTML;
-            const text = tempDiv.textContent || tempDiv.innerText || "";
-            navigator.clipboard.writeText(text);
-            addNotificationMessage('Response copied to clipboard', 'green');
-          });
-
-          // Speak button
-          const speakButton = document.createElement('button');
-          speakButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-          speakButton.title = "Read aloud";
-          speakButton.classList.add('hover:text-[var(--text-primary)]', 'transition-colors');
-          speakButton.addEventListener('click', () => {
-            const speechText = chat.aiMessage
-              .replace(/\[\[SYSTEM:.*?\]\]/gs, '')
-              .replace(/\[\[RESPOND:.*?\]\]/gs, '')
-              .replace(/\[\[NOTE:.*?\]\]/gs, '')
-              .replace(/```[\s\S]*?```/g, 'Code block omitted for speech.')
-              .trim();
-            
-            if (currentUtterance) {
-              speechSynthesis.cancel();
-            }
-            
-            currentUtterance = new SpeechSynthesisUtterance(speechText);
-            speechSynthesis.speak(currentUtterance);
-            addNotificationMessage('Reading response aloud', 'blue');
-          });
-
-          // Delete button
-          const deleteButton = document.createElement('button');
-          deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-          deleteButton.title = "Delete message";
-          deleteButton.classList.add('hover:text-red-500', 'transition-colors');
-          deleteButton.addEventListener('click', () => {
-            if (confirm('Delete this message?')) {
-              conversation.removeChild(userMessageElement);
-              conversation.removeChild(aiMessageElement);
-              addNotificationMessage('Message deleted', 'red');
-            }
-          });
-
-          // Add buttons to container
-          actionButtonsContainer.appendChild(copyButton);
-          actionButtonsContainer.appendChild(speakButton);
-          actionButtonsContainer.appendChild(deleteButton);
-
-          // Add action buttons to message
-          aiMessageElement.appendChild(actionButtonsContainer);
-          
-          conversation.appendChild(userMessageElement);
-          conversation.appendChild(aiMessageElement);
-          conversation.scrollTop = 0;
-          
-          // Close the history panel
-          history.classList.add('-translate-x-full');
-        });
-        
-        historyList.appendChild(chatItem);
-      });
-    }
-
-    // ====================
-    // Dialog Management 
-    // ====================
-    function showAddModelDialog() {
-      addModelDialog.classList.remove('hidden');
-      newModelId.value = '';
-      newModelName.value = '';
-      newModelCategory.value = 'customModelsGroup';
-    }
-    
-    function hideAddModelDialog() {
-      addModelDialog.classList.add('hidden');
-    }
-
-    // ====================
-    // Event Listeners
-    // ====================
-    // Model Management
-    modelSelect.addEventListener('change', function() {
-      if (this.value === 'custom') {
-        customModelContainer.classList.remove('hidden');
-        modelManageContainer.classList.add('hidden');
-      } else if (this.value !== '') {
-        customModelContainer.classList.add('hidden');
-        
-        // Check if this is a custom model
-        const isCustomModel = customModels.some(model => model.id === this.value);
-        if (isCustomModel) {
-          modelManageContainer.classList.remove('hidden');
-        } else {
-          modelManageContainer.classList.add('hidden');
-        }
-        
-        preferredModel = this.value;
-      }
-    });
-    
-    addModelBtn.addEventListener('click', () => {
-      showAddModelDialog();
-    });
-    
-    deleteModelBtn.addEventListener('click', deleteSelectedModel);
-    
-    saveCustomModel.addEventListener('click', () => {
-      const modelId = customModelInput.value.trim();
-      const displayName = customModelDisplay.value.trim();
-
-      if (!modelId) {
-        alert('Please enter a model ID');
-        return;
-      }
-      
-      if (addCustomModel(modelId, displayName)) {
-        addNotificationMessage(`Added custom model: ${displayName || modelId}`, 'green');
-        modelSelect.value = modelId;
-        customModelContainer.classList.add('hidden');
-        customModelInput.value = '';
-        customModelDisplay.value = '';
-      }
-    });
-    
-    // Add Model Dialog
-    confirmAddModel.addEventListener('click', () => {
-      const modelId = newModelId.value.trim();
-      const displayName = newModelName.value.trim();
-      const category = newModelCategory.value;
-      
-      if (!modelId) {
-        alert('Please enter a model ID');
-        return;
-      }
-      
-      if (addCustomModel(modelId, displayName, category)) {
-        addNotificationMessage(`Added model: ${displayName || modelId}`, 'green');
-        modelSelect.value = modelId;
-        hideAddModelDialog();
-      }
-    });
-    
-    cancelAddModel.addEventListener('click', hideAddModelDialog);
-    
-    // Theme Buttons
-    darkTheme.addEventListener('click', () => setTheme('dark-mode'));
-    lightTheme.addEventListener('click', () => setTheme('light-mode'));
-    greenTheme.addEventListener('click', () => setTheme('green-mode'));
-    blueTheme.addEventListener('click', () => setTheme('blue-mode'));
-    purpleTheme.addEventListener('click', () => setTheme('purple-mode'));
-    quicksilverTheme.addEventListener('click', () => setTheme('quicksilver-mode'));
-    sunsetTheme.addEventListener('click', () => setTheme('sunset-mode'));
-    bloodTheme.addEventListener('click', () => setTheme('blood-mode'));
-
-    // API Key
-    validateApiKeyButton.addEventListener('click', async () => {
-      const key = apiKeyInput.value.trim();
-      await validateApiKey(key);
-    });
-
-    // Panel Controls
-    powerButton.addEventListener('click', () => {
-      applet.classList.toggle('translate-x-full');
-    });
-    
-    closeSettings.addEventListener('click', () => {
-      applet.classList.add('translate-x-full');
-    });
-
-    historyButton.addEventListener('click', () => {
-      history.classList.toggle('-translate-x-full');
-      loadChatHistory();
-    });
-
-    closeHistory.addEventListener('click', () => {
-      history.classList.add('-translate-x-full');
-    });
-
-    // History Controls
-    copyHistory.addEventListener('click', () => {
-      const historyText = chatHistory.map(chat => `You: ${chat.userMessage}\nAI: ${chat.aiMessage}`).join('\n\n');
-      navigator.clipboard.writeText(historyText).then(() => {
-        alert('Chat history copied to clipboard');
-      });
-    });
-
-    exportHistory.addEventListener('click', () => {
-      const historyText = chatHistory.map(chat => `You: ${chat.userMessage}\nAI: ${chat.aiMessage}`).join('\n\n');
-      const blob = new Blob([historyText], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'chat_history.txt';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-    
-    clearHistory.addEventListener('click', () => {
-      if (confirm('Are you sure you want to clear all chat history?')) {
-        chatHistory = [];
-        localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-        loadChatHistory();
-      }
-    });
-
-    // Settings
-    saveSettings.addEventListener('click', async () => {
-      // Get API key and validate it if changed
-      const newApiKey = apiKeyInput.value.trim();
-      if (newApiKey !== apiKey) {
-        const isValid = await validateApiKey(newApiKey);
-        if (!isValid) {
-          alert("Please enter a valid OpenRouter API key.");
-          return;
-        }
-      }
-      
-      apiKey = newApiKey;
-      
-      // Get model selection
-      if (modelSelect.value === 'custom') {
-        preferredModel = customModelInput.value.trim();
-        if (!preferredModel) {
-          alert("Please enter a custom model identifier.");
-          return;
-        }
-      } else {
-        preferredModel = modelSelect.value;
-        if (!preferredModel) {
-          alert("Please select an AI model.");
-          return;
-        }
-      }
-      
-      // Get other settings
-      userInfo = userInfoInput.value;
-      responseInstructions = responseInstructionsInput.value;
-      aiSpeechEnabled = aiSpeechToggle.checked;
-      aiNotes = aiNotesInput.value;
-      preservedContent = preservedContentInput.value;
-      elegantModeEnabled = elegantModeToggle.checked;
-
-      // Save all settings to localStorage
-      localStorage.setItem('apiKey', apiKey);
-      localStorage.setItem('preferredModel', preferredModel);
-      localStorage.setItem('userInfo', userInfo);
-      localStorage.setItem('responseInstructions', responseInstructions);
-      localStorage.setItem('aiSpeechEnabled', aiSpeechEnabled);
-      localStorage.setItem('aiNotes', aiNotes);
-      localStorage.setItem('preservedContent', preservedContent);
-      localStorage.setItem('elegantModeEnabled', elegantModeEnabled);
-
-      updateTalkButtonText();
-      applet.classList.add('translate-x-full');
-      
-      addNotificationMessage('Settings saved successfully!');
-    });
-
-    // Talk/Send Button
-    talkButton.addEventListener('click', () => {
-      if (recognizing) {
-        recognition.stop();
-      } else if (!aiSpeechEnabled) {
-        addMessage();
-      } else {
-        if (currentUtterance) {
-          speechSynthesis.cancel();
-          currentUtterance = null;
-        }
-        recognition.start();
-      }
-    });
-
-    // Input
-    messageInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        addMessage();
-      }
-    });
-
-    // Text Size
-    decreaseTextSize.addEventListener('click', () => {
-      textSize = Math.max(12, textSize - 4); // Larger decrements
-      conversation.style.fontSize = `${textSize}px`;
-      localStorage.setItem('textSize', textSize);
-    });
-
-    increaseTextSize.addEventListener('click', () => {
-      textSize = Math.min(72, textSize + 4); // Much higher max and larger increments
-      conversation.style.fontSize = `${textSize}px`;
-      localStorage.setItem('textSize', textSize);
-    });
-
-    // ====================
-    // Utility Functions
-    // ====================
-    function updateTalkButtonText() {
-      talkButton.textContent = aiSpeechEnabled ? (recognizing ? 'Stop' : 'Talk') : 'Send';
-    }
-
-    function updateButtonColors() {
-      const elementsToUpdate = [
-        powerButton, 
-        talkButton,
-        messageInput
-      ];
-
-      elementsToUpdate.forEach(element => {
-        if (element && element.classList) {
-          element.classList.add('transition-colors', 'duration-300');
-        }
-      });
-    }
-
-    // ====================
-    // Initialization
-    // ====================
-    window.onload = () => {
-      // Load settings from localStorage
-      apiKey = localStorage.getItem('apiKey') || '';
-      preferredModel = localStorage.getItem('preferredModel') || '';
-      userInfo = localStorage.getItem('userInfo') || '';
-      responseInstructions = localStorage.getItem('responseInstructions') || '';
-      aiSpeechEnabled = localStorage.getItem('aiSpeechEnabled') === 'true';
-      aiNotes = localStorage.getItem('aiNotes') || '';
-      textSize = parseInt(localStorage.getItem('textSize')) || 16;
-      currentTheme = localStorage.getItem('theme') || 'dark-mode';
-      preservedContent = localStorage.getItem('preservedContent') || '';
-      elegantModeEnabled = localStorage.getItem('elegantModeEnabled') === 'true';
-      
-      // Set theme
-      setTheme(currentTheme);
-      
-      // Load custom models
-      loadCustomModels();
-
-      // Set initial values for form fields
-      apiKeyInput.value = apiKey;
-      conversation.style.fontSize = `${textSize}px`;
-      
-      // Setup model selection
-      if (preferredModel) {
-        // Check if it's in our predefined list
-        const modelOption = Array.from(modelSelect.options).find(option => option.value === preferredModel);
-        
-        if (modelOption) {
-          modelSelect.value = preferredModel;
-          
-          // Check if this is a custom model
-          const isCustomModel = customModels.some(model => model.id === preferredModel);
-          if (isCustomModel) {
-            modelManageContainer.classList.remove('hidden');
-          }
-        } else {
-          // Must be a custom model that's no longer in the list
-          modelSelect.value = 'custom';
-          customModelContainer.classList.remove('hidden');
-          customModelInput.value = preferredModel;
-        }
-      }
-      
-      userInfoInput.value = userInfo;
-      responseInstructionsInput.value = responseInstructions;
-      aiSpeechToggle.checked = aiSpeechEnabled;
-      aiNotesInput.value = aiNotes;
-      preservedContentInput.value = preservedContent;
-      elegantModeToggle.checked = elegantModeEnabled;
-
-      // Initialize UI
-      updateTalkButtonText();
-      updateButtonColors();
-      
-      // Show welcome message
-      if (chatHistory.length === 0) {
-        const welcomeElement = document.createElement('div');
-        welcomeElement.innerHTML = marked(`
-# welcome to ai-nChat!
-
-## our mission at ai-nspired
-*pragmatic, personal, private ai — as above, so below*
-
-ai-nChat gives you access to powerful ai language models while keeping your conversations private and personalized. unlike other solutions, we're built on pragmatic principles — delivering real utility while adapting to your unique preferences over time.
-
-### key features:
-- **model freedom**: choose from multiple ai engines through OpenRouter
-- **complete privacy**: all data stays on your device using local storage
-- **adaptive intelligence**: automatically learns and remembers your preferences
-- **pragmatic design**: focused on utility with minimal distractions
-- **preserved content**: keep important instructions safe across conversations
-
-### getting started:
-1. click the settings button (⚙️) in the top-left
-2. enter your OpenRouter API key
-3. select a model (we recommend starting with liquid/lfm-7b for speed and value)
-4. customize your experience in settings
-5. start chatting!
-
-### power tips:
-- the quality of outputs depends on your prompts — better prompts yield better results
-- use "/system" and "/respond" commands to directly update your ai's behavior
-- save important notes with the preserved content feature
-- add custom models by typing "add model" in the chat
-- try different themes for different moods and environments
-- there are no limits especially when you have a system that learns from you as you learn from ai
-
-*created by [ai-nspired](https://ai-nspired.com) - where ai meets human creativity*
-  `);
-        conversation.appendChild(welcomeElement);
-      }
+  }
+
+  makeDraggable(node) {
+    const header = node.modal._dialog.querySelector('.modal-header');
+    let pos = {};
+    const move = (e) => {
+      const x = e.clientX || e.touches?.[0]?.clientX;
+      const y = e.clientY || e.touches?.[0]?.clientY;
+      node.dialog.style.left = `${parseFloat(node.dialog.style.left || 20) + (x - pos.x)/innerWidth*100}vmin`;
+      node.dialog.style.top = `${parseFloat(node.dialog.style.top || 20) + (y - pos.y)/innerHeight*100}vmin`;
+      pos = { x, y };
     };
-
-    // Only keep most recent messages that fit within token budget
-    function addToHistory(role, content) {
-      const tokens = estimateTokens(content);
-      messageHistory.push({role, content, tokens});
-      tokenCount += tokens;
-      
-      // Trim history if needed
-      while (tokenCount > maxTokens && messageHistory.length > 1) {
-        const removed = messageHistory.shift();
-        tokenCount -= removed.tokens;
-      }
-    }
-
-    // Configure marked.js options to ensure proper rendering
-    marked.setOptions({
-      renderer: new marked.Renderer(),
-      gfm: true,
-      breaks: true,
-      sanitize: false,
-      smartLists: true,
-      smartypants: true,
-      xhtml: false
+    header.addEventListener('pointerdown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      pos = { x: e.clientX || e.touches?.[0].clientX, y: e.clientY || e.touches?.[0].clientY };
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', () => document.removeEventListener('pointermove', move));
     });
-  </script>
+  }
+
+  makeResizable(node) {
+    const resizer = node.dialog.querySelector('.resizer');
+    let pos = {};
+    const resize = (e) => {
+      node.dialog.style.width = `${parseFloat(node.dialog.style.width || 60) + (e.clientX - pos.x)/innerWidth*100}vmin`;
+      node.dialog.style.height = `${parseFloat(node.dialog.style.height || 75) + (e.clientY - pos.y)/innerHeight*100}vmin`;
+      pos = { x: e.clientX, y: e.clientY };
+    };
+    resizer.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      pos = { x: e.clientX, y: e.clientY };
+      document.addEventListener('pointermove', resize);
+      document.addEventListener('pointerup', () => document.removeEventListener('pointermove', resize));
+    });
+  }
+
+  makeScrollable(node) {
+    node.contentEl.style.overflowY = 'auto';
+  }
+
+  toggleMinimize(id) {
+    const node = this.nodes.find(n => n.id === id);
+    if (node) node.modal._element.classList.toggle('minimized');
+  }
+
+  toggleFS(id) {
+    const node = this.nodes.find(n => n.id === id);
+    if (node) node.modal._element.classList.toggle('modal-fs');
+  }
+
+  remove(id) {
+    const node = this.nodes.find(n => n.id === id);
+    if (node) {
+      node.modal.hide();
+      setTimeout(() => node.modal._element.remove(), 300);
+      this.nodes = this.nodes.filter(n => n.id !== id);
+    }
+  }
+
+  clear() {
+    if (confirm('Clear yard?')) this.nodes.forEach(n => this.remove(n.id));
+  }
+}
+
+const forge = new Forge();
+</script>
 </body>
 </html>
