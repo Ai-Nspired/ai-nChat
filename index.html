@@ -7,292 +7,33 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-    body {
-      background: #000;
-      color: #fff;
-      overflow: hidden;
-      height: 100dvh;
-      margin: 0;
-      font-family: system-ui;
-      touch-action: manipulation;
-    }
-
-    .yard {
-      position: fixed;
-      inset: 0;
-      margin: auto;
-      width: 92vmin;
-      height: 92vmin;
-      border: 3px solid rgba(250, 204, 21, .2);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .modal-content {
-      background: #000;
-      border: none;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      padding: 0;
-      overflow: hidden;
-    }
-
-    .modal-header {
-      background: rgba(30, 30, 50, .8);
-      border-bottom: 1px solid #facc15;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: grab;
-      flex-shrink: 0;
-      user-select: none;
-      touch-action: none;
-    }
-
-    .modal-header:active {
-      cursor: grabbing;
-    }
-
-    .modal-title {
-      font-size: 28px;
-      font-weight: 300;
-      color: #fff;
-      margin: 0;
-      flex: 1;
-      text-align: center;
-    }
-
-    .header-buttons {
-      display: flex;
-      gap: 5px;
-      z-index: 10;
-    }
-
-    .header-buttons button {
-      background: rgba(0,0,0,0.5);
-      border: 1px solid #facc15;
-      color: #facc15;
-      border-radius: 4px;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: rgba(10, 10, 20, .6);
-    }
-
-    .content-area::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .content-area::-webkit-scrollbar-thumb {
-      background: #facc15;
-      border-radius: 4px;
-    }
-
-    .input-group {
-      position: relative;
-      padding: 20px;
-      flex-shrink: 0;
-    }
-
-    .truth-input {
-      width: 100%;
-      min-height: 100px;
-      background: rgba(0, 0, 0, .3);
-      border: 2px solid #facc15;
-      border-radius: 12px;
-      color: #fff;
-      padding: 15px;
-      font-size: 16px;
-      resize: none;
-      outline: none;
-      font-family: monospace;
-      margin-bottom: 10px;
-    }
-
-    .send-btn {
-      position: absolute;
-      right: 30px;
-      bottom: 30px;
-      width: 50px;
-      height: 50px;
-      background: #facc15;
-      color: #000;
-      border: none;
-      border-radius: 50%;
-      font-size: 20px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(250, 204, 21, .5);
-    }
-
-    .forgebar {
-      position: fixed;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(30, 30, 50, .95);
-      border: 2px solid #facc15;
-      border-radius: 16px;
-      padding: 16px 8px;
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      box-shadow: 0 0 30px rgba(250, 204, 21, .4);
-    }
-
-    .forgebar button {
-      background: transparent;
-      border: none;
-      color: #facc15;
-      font-size: 28px;
-      cursor: pointer;
-      padding: 5px;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .forgebar button:hover {
-      color: #fff;
-      transform: scale(1.2);
-    }
-
-    #count {
-      writing-mode: vertical-rl;
-      font-weight: 900;
-      color: #facc15;
-      font-size: 18px;
-      text-align: center;
-      padding: 5px 0;
-    }
-
-    .resizer {
-      position: absolute;
-      bottom: 4px;
-      right: 4px;
-      width: 16px;
-      height: 16px;
-      cursor: se-resize;
-      z-index: 10;
-    }
-
-    .resizer::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: 2px solid #facc15;
-      border-top: none;
-      border-left: none;
-    }
-
-    .minimized .content-area,
-    .minimized .input-group,
-    .minimized .resizer {
-      display: none !important;
-    }
-
-    .minimized .modal-dialog {
-      width: max-content !important;
-      height: 64px !important;
-      min-width: 220px !important;
-    }
-
-    .minimized .modal-header {
-      border-radius: 32px;
-      justify-content: center;
-      backdrop-filter: blur(20px);
-      border: 2px solid #facc15;
-    }
-
-    .chat-message {
-      margin: 12px 0;
-      padding: 12px;
-      border-radius: 12px;
-      max-width: 95%;
-      position: relative;
-    }
-
-    .user {
-      background: rgba(59, 130, 246, .2);
-      margin-left: auto;
-      border-left: 4px solid #3b82f6;
-    }
-
-    .ai {
-      background: rgba(250, 204, 21, .15);
-      border-left: 4px solid #facc15;
-    }
-
-    .modal-fs .modal-dialog {
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100dvh !important;
-      max-width: none !important;
-      margin: 0 !important;
-    }
-
-    .copy-btn,
-    .tts-btn,
-    .stop-btn {
-      position: absolute;
-      top: 5px;
-      background: #facc15;
-      color: #000;
-      border: none;
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-size: 12px;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .copy-btn {
-      right: 5px;
-    }
-
-    .tts-btn {
-      right: 35px;
-    }
-
-    .stop-btn {
-      right: 65px;
-      background: #ff4444;
-      color: #fff;
-      display: none;
-    }
-
-    .modal-dialog {
-      position: absolute;
-      will-change: transform;
-      transition: opacity 0.1s ease;
-    }
-
-    .modal-header::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-    }
+    body{background:#000;color:#fff;overflow:hidden;height:100dvh;margin:0;font-family:system-ui}
+    .yard{position:fixed;inset:0;margin:auto;width:92vmin;height:92vmin;border:3px solid rgba(250,204,21,.2);pointer-events:none;z-index:1}
+    .modal-content{background:#000;border:none;display:flex;flex-direction:column;height:100%;padding:0;overflow:hidden}
+    .modal-header{background:rgba(30,30,50,.8);border-bottom:1px solid #facc15;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;cursor:move;flex-shrink:0;user-select:none}
+    .modal-title{font-size:28px;font-weight:300;color:#fff;margin:0;flex:1;text-align:center}
+    .content-area{flex:1;overflow-y:auto;padding:20px;background:rgba(10,10,20,.6)}
+    .content-area::-webkit-scrollbar{width:8px}.content-area::-webkit-scrollbar-thumb{background:#facc15;border-radius:4px}
+    .input-group{position:relative;padding:0 20px 20px;flex-shrink:0}
+    .truth-input{width:100%;height:140px;background:rgba(0,0,0,.3);border:2px solid #facc15;border-radius:32px;color:#fff;padding:20px 80px 20px 20px;font-size:18px;resize:none;outline:none;font-family:monospace}
+    .send-btn{position:absolute;right:20px;bottom:20px;width:55px;height:55px;background:#facc15;color:#000;border:none;border-radius:50%;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(250,204,21,.5)}
+    .forgebar{position:fixed;left:12px;top:50%;transform:translateY(-50%);background:rgba(30,30,50,.95);border:2px solid #facc15;border-radius:16px;padding:16px 8px;z-index:1000;display:flex;flex-direction:column;gap:20px;box-shadow:0 0 30px rgba(250,204,21,.4)}
+    .forgebar button{background:transparent;border:none;color:#facc15;font-size:28px;cursor:pointer}
+    .forgebar button:hover{color:#fff;transform:scale(1.2)}
+    #count{writing-mode:vertical-rl;font-weight:900;color:#facc15;font-size:18px}
+    .resizer{position:absolute;bottom:4px;right:4px;width:16px;height:16px;cursor:se-resize;z-index:10}
+    .resizer::after{content:"";position:absolute;inset:0;border:2px solid #facc15;border-top:none;border-left:none}
+    .minimized .content-area,.minimized .input-group,.minimized .resizer{display:none!important}
+    .minimized .modal-dialog{width:max-content!important;height:64px!important;min-width:220px!important}
+    .minimized .modal-header{border-radius:32px;justify-content:center;backdrop-filter:blur(20px);border:2px solid #facc15}
+    .chat-message{margin:12px 0;padding:12px;border-radius:12px;max-width:95%;position:relative}
+    .user{background:rgba(59,130,246,.2);margin-left:auto;border-left:4px solid #3b82f6}
+    .ai{background:rgba(250,204,21,.15);border-left:4px solid #facc15;position:relative}
+    .modal-fs .modal-dialog{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important}
+    .copy-btn,.tts-btn{position:absolute;top:5px;background:#facc15;color:#000;border:none;border-radius:4px;padding:2px 6px;font-size:12px;cursor:pointer}
+    .copy-btn{right:5px}
+    .tts-btn{right:35px}
+    .stop-btn{display:none}
   </style>
 </head>
 <body>
@@ -300,11 +41,11 @@
 <div class="yard"></div>
 
 <div class="forgebar">
+  <button onclick="forge.create('note')" title="Sticky Note">📝</button>
   <button onclick="forge.create('agent')" title="AI Agent">🤖</button>
   <button onclick="forge.create('doc')" title="Document">📄</button>
   <button onclick="forge.clear()" title="Clear All">🗑️</button>
   <div id="count">0</div>
-  <button onclick="forge.toggleForgebar()" title="Toggle Forgebar">⊞</button>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -315,7 +56,6 @@ class Forge {
     this.z = 1000;
     this.sessionId = crypto.randomUUID();
     this.currentUtterance = null;
-    this.forgebarMinimized = false;
   }
 
   create(type) {
@@ -330,28 +70,6 @@ class Forge {
     document.getElementById('count').textContent = this.nodes.length;
   }
 
-  toggleForgebar() {
-    const forgebar = document.querySelector('.forgebar');
-    this.forgebarMinimized = !this.forgebarMinimized;
-
-    if (this.forgebarMinimized) {
-      forgebar.style.width = '40px';
-      forgebar.style.height = '200px';
-      forgebar.style.flexDirection = 'column';
-      forgebar.querySelectorAll('button, #count').forEach(el => {
-        if (el.id !== 'count') el.style.display = 'none';
-      });
-      forgebar.querySelector('button:last-child').style.display = 'flex';
-    } else {
-      forgebar.style.width = '';
-      forgebar.style.height = '';
-      forgebar.style.flexDirection = 'column';
-      forgebar.querySelectorAll('button, #count').forEach(el => {
-        el.style.display = '';
-      });
-    }
-  }
-
   render(node) {
     const modalDiv = document.createElement('div');
     modalDiv.className = 'modal';
@@ -359,22 +77,21 @@ class Forge {
     modalDiv.style.zIndex = this.z++;
 
     modalDiv.innerHTML = `
-      <div class="modal-dialog" style="left:20%;top:20%;width:60%;height:75%;">
+      <div class="modal-dialog" style="position:absolute;left:20vmin;top:20vmin;width:60vmin;height:75vmin;">
         <div class="modal-content">
           <div class="modal-header">
-            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : 'Document'}</div>
-            <div class="header-buttons">
-              <button onclick="event.stopPropagation(); forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
-              <button onclick="event.stopPropagation(); forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
-              <button onclick="event.stopPropagation(); forge.remove(${node.id})" title="Close">✕</button>
+            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : node.type === 'doc' ? 'Document' : 'Note'}</div>
+            <div>
+              <button class="btn btn-sm text-warning" onclick="forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
+              <button class="btn btn-sm text-white" onclick="forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
+              <button class="btn btn-sm text-danger" onclick="forge.remove(${node.id})" title="Close">✕</button>
             </div>
           </div>
           <div class="content-area" id="content-${node.id}"></div>
-          ${node.type === 'agent' ? `
           <div class="input-group">
-            <textarea class="truth-input" id="input-${node.id}" placeholder="Type your message here..."></textarea>
+            <textarea class="truth-input" id="input-${node.id}" placeholder="Ask or write..."></textarea>
             <button class="send-btn" onclick="forge.send(${node.id})">➤</button>
-          </div>` : ''}
+          </div>
           <div class="resizer"></div>
         </div>
       </div>`;
@@ -393,7 +110,7 @@ class Forge {
     this.makeScrollable(node);
 
     if (node.type === 'agent') {
-      this.appendMessage(node, 'ai', "I'm ready to assist you. Type your message below and press the send button.");
+      this.appendMessage(node, 'ai', "I'm connected to your real ai-proxy.");
     }
   }
 
@@ -403,13 +120,12 @@ class Forge {
 
     if (role === 'ai') {
       div.innerHTML = `
-        <button class="copy-btn" onclick="forge.copyMessage(this)" title="Copy">⎘</button>
-        <button class="tts-btn" onclick="forge.speakMessage(this)" title="Speak">🔊</button>
-        <button class="stop-btn" onclick="forge.stopSpeaking()" title="Stop">⏹️</button>
-        <div class="message-content">${marked.parse(text)}</div>
+        <button class="copy-btn" onclick="forge.copyMessage(this)">⎘</button>
+        <button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button>
+        ${marked.parse(text)}
       `;
     } else {
-      div.innerHTML = `<div class="message-content">${marked.parse(text)}</div>`;
+      div.innerHTML = marked.parse(text);
     }
 
     node.contentEl.appendChild(div);
@@ -417,15 +133,12 @@ class Forge {
   }
 
   copyMessage(button) {
-    const message = button.closest('.chat-message').querySelector('.message-content');
-    const text = message.textContent.trim();
-
-    navigator.clipboard.writeText(text)
-      .then(() => {
-        button.textContent = '✓';
-        setTimeout(() => button.textContent = '⎘', 2000);
-      })
-      .catch(err => console.error('Copy failed:', err));
+    const message = button.closest('.chat-message');
+    const text = message.textContent.replace('⎘', '').replace('🔊', '').trim();
+    navigator.clipboard.writeText(text).then(() => {
+      button.textContent = '✓';
+      setTimeout(() => button.textContent = '⎘', 2000);
+    });
   }
 
   speakMessage(button) {
@@ -433,36 +146,15 @@ class Forge {
       speechSynthesis.cancel();
     }
 
-    const message = button.closest('.chat-message').querySelector('.message-content');
-    const text = message.textContent.trim();
-
+    const message = button.closest('.chat-message');
+    const text = message.textContent.replace('⎘', '').replace('🔊', '').trim();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
-    utterance.volume = 1.0;
-    utterance.lang = 'en-US';
+    utterance.onend = () => button.style.display = 'inline-block';
 
-    utterance.onstart = () => {
-      button.style.display = 'none';
-      button.nextElementSibling.style.display = 'inline-block';
-    };
-
-    utterance.onend = () => {
-      button.style.display = 'inline-block';
-      button.nextElementSibling.style.display = 'none';
-    };
-
+    button.style.display = 'none';
     this.currentUtterance = utterance;
     speechSynthesis.speak(utterance);
-  }
-
-  stopSpeaking() {
-    speechSynthesis.cancel();
-    document.querySelectorAll('.tts-btn').forEach(btn => {
-      btn.style.display = 'inline-block';
-    });
-    document.querySelectorAll('.stop-btn').forEach(btn => {
-      btn.style.display = 'none';
-    });
   }
 
   async send(id) {
@@ -473,154 +165,61 @@ class Forge {
 
     this.appendMessage(node, 'user', query);
     node.input.value = '';
-    this.appendMessage(node, 'ai', 'Thinking...');
+    this.appendMessage(node, 'ai', 'thinking...');
 
     try {
       const res = await fetch("https://ai-proxy.ai-n.workers.dev/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          message: query,
-          sessionId: this.sessionId
-        })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: query, sessionId: this.sessionId })
       });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
       const data = await res.json();
-      const answer = data.response || data.answer || "Sorry, I couldn't generate a response.";
+      const answer = data.response || data.answer || "no response";
 
-      // Remove the "Thinking..." message
-      node.contentEl.removeChild(node.contentEl.lastChild);
-      this.appendMessage(node, 'ai', answer);
+      node.contentEl.lastChild.innerHTML = `
+        <button class="copy-btn" onclick="forge.copyMessage(this)">⎘</button>
+        <button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button>
+        ${marked.parse(answer)}
+      `;
+      node.contentEl.scrollTop = node.contentEl.scrollHeight;
 
     } catch (e) {
-      console.error("Error:", e);
-      node.contentEl.lastChild.textContent = "Error: " + e.message;
+      node.contentEl.lastChild.textContent = "error: " + e.message;
     }
   }
 
   makeDraggable(node) {
     const header = node.modal._dialog.querySelector('.modal-header');
-    let pos = { x: 0, y: 0 };
-    let startPos = { x: 0, y: 0 };
-    let isDragging = false;
-
-    const startDrag = (e) => {
-      if (e.target.closest('button')) return;
-
-      isDragging = true;
-      startPos = {
-        x: e.clientX || e.touches[0].clientX,
-        y: e.clientY || e.touches[0].clientY
-      };
-
-      // Store initial position
-      const rect = node.dialog.getBoundingClientRect();
-      pos = {
-        x: rect.left,
-        y: rect.top
-      };
-
-      // Visual feedback
-      header.style.cursor = 'grabbing';
-      header.style.opacity = '0.9';
-
-      e.preventDefault();
-    };
-
+    let pos = {};
     const move = (e) => {
-      if (!isDragging) return;
-
-      const currentX = e.clientX || e.touches[0].clientX;
-      const currentY = e.clientY || e.touches[0].clientY;
-
-      // Calculate new position
-      const newX = pos.x + (currentX - startPos.x);
-      const newY = pos.y + (currentY - startPos.y);
-
-      // Boundary checking
-      const maxX = window.innerWidth - node.dialog.offsetWidth;
-      const maxY = window.innerHeight - node.dialog.offsetHeight;
-
-      // Apply position with transform
-      node.dialog.style.transform = `translate(
-        ${Math.max(0, Math.min(newX, maxX))}px,
-        ${Math.max(0, Math.min(newY, maxY))}px
-      )`;
-
-      e.preventDefault();
+      const x = e.clientX || e.touches?.[0]?.clientX;
+      const y = e.clientY || e.touches?.[0]?.clientY;
+      node.dialog.style.left = `${parseFloat(node.dialog.style.left || 20) + (x - pos.x)/innerWidth*100}vmin`;
+      node.dialog.style.top = `${parseFloat(node.dialog.style.top || 20) + (y - pos.y)/innerHeight*100}vmin`;
+      pos = { x, y };
     };
-
-    const endDrag = () => {
-      if (!isDragging) return;
-      isDragging = false;
-
-      // Convert transform to left/top
-      const transform = node.dialog.style.transform;
-      if (transform) {
-        const match = transform.match(/translate\(([\d.]+)px, ([\d.]+)px\)/);
-        if (match) {
-          node.dialog.style.left = match[1] + 'px';
-          node.dialog.style.top = match[2] + 'px';
-          node.dialog.style.transform = '';
-        }
-      }
-
-      // Reset visual feedback
-      header.style.cursor = '';
-      header.style.opacity = '';
-    };
-
-    // Use pointer events for better cross-device support
-    header.addEventListener('pointerdown', startDrag);
-    document.addEventListener('pointermove', move);
-    document.addEventListener('pointerup', endDrag);
-    document.addEventListener('pointercancel', endDrag);
+    header.addEventListener('pointerdown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      pos = { x: e.clientX || e.touches?.[0].clientX, y: e.clientY || e.touches?.[0]?.clientY };
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', () => document.removeEventListener('pointermove', move));
+    });
   }
 
   makeResizable(node) {
     const resizer = node.dialog.querySelector('.resizer');
     let pos = {};
-    let isResizing = false;
-
     const resize = (e) => {
-      if (!isResizing) return;
-
-      const width = parseFloat(node.dialog.style.width || node.dialog.offsetWidth);
-      const height = parseFloat(node.dialog.style.height || node.dialog.offsetHeight);
-
-      const newWidth = width + (e.clientX - pos.x);
-      const newHeight = height + (e.clientY - pos.y);
-
-      // Apply minimum size constraints
-      node.dialog.style.width = `${Math.max(300, newWidth)}px`;
-      node.dialog.style.height = `${Math.max(200, newHeight)}px`;
-
+      node.dialog.style.width = `${parseFloat(node.dialog.style.width || 60) + (e.clientX - pos.x)/innerWidth*100}vmin`;
+      node.dialog.style.height = `${parseFloat(node.dialog.style.height || 75) + (e.clientY - pos.y)/innerHeight*100}vmin`;
       pos = { x: e.clientX, y: e.clientY };
     };
-
-    const startResize = (e) => {
+    resizer.addEventListener('pointerdown', (e) => {
       e.stopPropagation();
-      isResizing = true;
       pos = { x: e.clientX, y: e.clientY };
-
-      document.addEventListener('mousemove', resize);
-      document.addEventListener('mouseup', endResize);
-    };
-
-    const endResize = () => {
-      isResizing = false;
-      document.removeEventListener('mousemove', resize);
-      document.removeEventListener('mouseup', endResize);
-    };
-
-    resizer.addEventListener('mousedown', startResize);
+      document.addEventListener('pointermove', resize);
+      document.addEventListener('pointerup', () => document.removeEventListener('pointermove', resize));
+    });
   }
 
   makeScrollable(node) {
@@ -637,34 +236,7 @@ class Forge {
 
   toggleFS(id) {
     const node = this.nodes.find(n => n.id === id);
-    if (node) {
-      node.modal._element.classList.toggle('modal-fs');
-
-      if (node.modal._element.classList.contains('modal-fs')) {
-        // Store original dimensions
-        node.originalDimensions = {
-          left: node.dialog.style.left,
-          top: node.dialog.style.top,
-          width: node.dialog.style.width,
-          height: node.dialog.style.height
-        };
-
-        // Apply fullscreen
-        node.dialog.style.left = '0';
-        node.dialog.style.top = '0';
-        node.dialog.style.width = '100%';
-        node.dialog.style.height = '100%';
-        node.dialog.style.transform = 'none';
-      } else {
-        // Restore original dimensions
-        if (node.originalDimensions) {
-          node.dialog.style.left = node.originalDimensions.left;
-          node.dialog.style.top = node.originalDimensions.top;
-          node.dialog.style.width = node.originalDimensions.width;
-          node.dialog.style.height = node.originalDimensions.height;
-        }
-      }
-    }
+    if (node) node.modal._element.classList.toggle('modal-fs');
   }
 
   remove(id) {
@@ -680,9 +252,7 @@ class Forge {
   }
 
   clear() {
-    if (confirm('Clear all nodes?')) {
-      this.nodes.forEach(n => this.remove(n.id));
-    }
+    if (confirm('Clear yard?')) this.nodes.forEach(n => this.remove(n.id));
   }
 }
 
