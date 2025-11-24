@@ -14,6 +14,7 @@
       height: 100dvh;
       margin: 0;
       font-family: system-ui;
+      touch-action: none;
     }
 
     .yard {
@@ -240,21 +241,27 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 20px;
-      height: 20px;
+      width: 30px;
+      height: 30px;
       background: rgba(250, 204, 21, 0.3);
-      border-radius: 0 0 4px 0;
+      border-radius: 0 0 8px 0;
       cursor: move;
       z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 12px;
+      font-size: 16px;
       color: rgba(250, 204, 21, 0.8);
+      transition: all 0.2s;
     }
 
     .drag-handle:hover {
       background: rgba(250, 204, 21, 0.5);
+    }
+
+    .drag-handle.active {
+      background: #facc15;
+      color: #000;
     }
 
     .drag-indicator {
@@ -264,8 +271,8 @@
       border: 2px dashed #facc15;
       border-radius: 8px;
       pointer-events: none;
-      display: none;
       z-index: 20;
+      display: none;
     }
 
     .resizing {
@@ -292,13 +299,14 @@ class Forge {
     this.z = 1000;
     this.sessionId = crypto.randomUUID();
     this.currentUtterance = null;
-    this.dragTimeout = null;
+    this.activeNode = null;
+    this.isDragging = false;
     this.isResizing = false;
     this.startX = 0;
     this.startY = 0;
     this.startWidth = 0;
     this.startHeight = 0;
-    this.activeNode = null;
+    this.initialDistance = 0;
   }
 
   create(type) {
@@ -351,36 +359,40 @@ class Forge {
     node.handle = modalDiv.querySelector('.drag-handle');
     node.indicator = modalDiv.querySelector('.drag-indicator');
     node.header = modalDiv.querySelector('.modal-header');
+    node.content = modalDiv.querySelector('.modal-content');
 
     this.setupInteractions(node);
     this.makeScrollable(node);
 
     if (node.type === 'agent') {
-      this.appendMessage(node, 'ai', "Long press handle to drag, double tap to resize");
+      this.appendMessage(node, 'ai', "Double-tap handle to move, pinch to resize");
     } else {
-      this.appendMessage(node, 'ai', "Long press handle to drag, double tap to resize");
+      this.appendMessage(node, 'ai', "Double-tap handle to move, pinch to resize");
     }
   }
 
   setupInteractions(node) {
-    // Long press to drag
-    node.handle.addEventListener('mousedown', (e) => {
-      this.dragTimeout = setTimeout(() => {
-        this.startDrag(node, e);
-      }, 300);
-    });
-
-    node.handle.addEventListener('mouseup', () => {
-      clearTimeout(this.dragTimeout);
-    });
-
-    node.handle.addEventListener('mouseleave', () => {
-      clearTimeout(this.dragTimeout);
-    });
-
-    // Double tap to resize
+    // Double tap to activate movement
     node.handle.addEventListener('dblclick', (e) => {
-      this.startResize(node, e);
+      e.preventDefault();
+      this.activateMovement(node);
+    });
+
+    // Touch events for pinch to resize
+    node.content.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        this.startResize(node, e);
+      }
+    }, { passive: false });
+
+    node.content.addEventListener('touchmove', (e) => {
+      if (this.isResizing && e.touches.length === 2) {
+        this.resize(node, e);
+      }
+    }, { passive: false });
+
+    node.content.addEventListener('touchend', () => {
+      this.endResize();
     });
 
     // Show header when interacting
@@ -392,36 +404,46 @@ class Forge {
     document.addEventListener('mouseup', () => {
       if (this.activeNode) {
         setTimeout(() => {
-          this.activeNode.header.style.display = 'none';
+          if (!this.isDragging && !this.isResizing) {
+            this.activeNode.header.style.display = 'none';
+          }
         }, 1000);
       }
     });
   }
 
-  startDrag(node, e) {
-    e.preventDefault();
+  activateMovement(node) {
     this.activeNode = node;
+    node.handle.classList.add('active');
     node.indicator.style.display = 'block';
     node.header.style.display = 'flex';
 
-    const rect = node.dialog.getBoundingClientRect();
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
     const move = (e) => {
-      node.dialog.style.left = `${e.clientX - offsetX}px`;
-      node.dialog.style.top = `${e.clientY - offsetY}px`;
+      e.preventDefault();
+      const rect = node.dialog.getBoundingClientRect();
+      const clientX = e.clientX || e.touches[0].clientX;
+      const clientY = e.clientY || e.touches[0].clientY;
+
+      node.dialog.style.left = `${clientX - rect.width/2}px`;
+      node.dialog.style.top = `${clientY - 15}px`;
     };
 
     const up = () => {
+      node.handle.classList.remove('active');
       node.indicator.style.display = 'none';
       document.removeEventListener('mousemove', move);
       document.removeEventListener('mouseup', up);
+      document.removeEventListener('touchmove', move);
+      document.removeEventListener('touchend', up);
       this.activeNode = null;
+      this.isDragging = false;
     };
 
     document.addEventListener('mousemove', move);
     document.addEventListener('mouseup', up);
+    document.addEventListener('touchmove', move);
+    document.addEventListener('touchend', up);
+    this.isDragging = true;
   }
 
   startResize(node, e) {
@@ -431,30 +453,41 @@ class Forge {
     node.dialog.classList.add('resizing');
     node.header.style.display = 'flex';
 
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    this.initialDistance = Math.hypot(
+      touch1.clientX - touch2.clientX,
+      touch1.clientY - touch2.clientY
+    );
+
     const rect = node.dialog.getBoundingClientRect();
-    this.startX = e.clientX;
-    this.startY = e.clientY;
     this.startWidth = rect.width;
     this.startHeight = rect.height;
+  }
 
-    const move = (e) => {
-      const newWidth = this.startWidth + (e.clientX - this.startX);
-      const newHeight = this.startHeight + (e.clientY - this.startY);
+  resize(node, e) {
+    e.preventDefault();
+    const touch1 = e.touches[0];
+    const touch2 = e.touches[1];
+    const currentDistance = Math.hypot(
+      touch1.clientX - touch2.clientX,
+      touch1.clientY - touch2.clientY
+    );
 
-      node.dialog.style.width = `${Math.max(300, newWidth)}px`;
-      node.dialog.style.height = `${Math.max(200, newHeight)}px`;
-    };
+    const scale = currentDistance / this.initialDistance;
+    const newWidth = this.startWidth * scale;
+    const newHeight = this.startHeight * scale;
 
-    const up = () => {
+    node.dialog.style.width = `${Math.max(300, newWidth)}px`;
+    node.dialog.style.height = `${Math.max(200, newHeight)}px`;
+  }
+
+  endResize() {
+    if (this.isResizing) {
+      this.activeNode.dialog.classList.remove('resizing');
       this.isResizing = false;
-      node.dialog.classList.remove('resizing');
-      document.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseup', up);
       this.activeNode = null;
-    };
-
-    document.addEventListener('mousemove', move);
-    document.addEventListener('mouseup', up);
+    }
   }
 
   appendMessage(node, role, text) {
