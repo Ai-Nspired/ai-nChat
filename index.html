@@ -16,8 +16,8 @@
     .content-area::-webkit-scrollbar{width:8px}.content-area::-webkit-scrollbar-thumb{background:#facc15;border-radius:4px}
     .input-group{position:relative;padding:0 20px 20px;flex-shrink:0}
     .truth-input{width:100%;height:140px;background:rgba(0,0,0,.3);border:2px solid #facc15;border-radius:32px;color:#fff;padding:20px 80px 20px 20px;font-size:18px;resize:none;outline:none;font-family:monospace}
-    .send-btn{position:absolute;right:20px;bottom:20px;width:55px;height:55px;background:#facc15;color:#000;border:none;border-radius:50%;font-size:24px;font-weight:900;cursor:pointer;box-shadow:0 4px 20px rgba(250,204,21,.5)}
-    .forgebar{position:fixed;left:12px;top:50%;transform:translateY(-50%);background:rgba(30,30,50,.95);border:2px solid #facc15;border-radius:16px;padding:16px 8px;z-index:1000;display:flex;flex-direction:column;gap:20px;box-shadow:0 0 30px rgba(250,204,21,.4)}
+    .send-btn{position:absolute;right:20px;bottom:20px;width:55px;height:55px;background:#facc15;color:#000;border:none;border-radius:50%;font-size:24px;font-weight:900;cursor:pointer}
+    .forgebar{position:fixed;left:12px;top:50%;transform:translateY(-50%);background:rgba(30,30,50,.95);border:2px solid #facc15;border-radius:16px;padding:16px 8px;z-index:1000;display:flex;flex-direction:column;gap:20px}
     .forgebar button{background:transparent;border:none;color:#facc15;font-size:28px;cursor:pointer}
     .forgebar button:hover{color:#fff;transform:scale(1.2)}
     #count{writing-mode:vertical-rl;font-weight:900;color:#facc15;font-size:18px}
@@ -30,10 +30,12 @@
     .user{background:rgba(59,130,246,.2);margin-left:auto;border-left:4px solid #3b82f6}
     .ai{background:rgba(250,204,21,.15);border-left:4px solid #facc15;position:relative}
     .modal-fs .modal-dialog{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important}
-    .copy-btn,.tts-btn{position:absolute;top:5px;background:#facc15;color:#000;border:none;border-radius:4px;padding:2px 6px;font-size:12px;cursor:pointer}
+    .copy-btn,.tts-btn,.stop-btn{position:absolute;top:5px;background:#facc15;color:#000;border:none;border-radius:4px;padding:2px 6px;font-size:12px;cursor:pointer}
     .copy-btn{right:5px}
     .tts-btn{right:35px}
-    .stop-btn{display:none}
+    .stop-btn{right:65px;display:none}
+    .header-btn{background:transparent;border:none;color:#fff;font-size:20px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;margin-left:5px}
+    .header-btn.close{color:#ff4444}
   </style>
 </head>
 <body>
@@ -41,7 +43,6 @@
 <div class="yard"></div>
 
 <div class="forgebar">
-  <button onclick="forge.create('note')" title="Sticky Note">📝</button>
   <button onclick="forge.create('agent')" title="AI Agent">🤖</button>
   <button onclick="forge.create('doc')" title="Document">📄</button>
   <button onclick="forge.clear()" title="Clear All">🗑️</button>
@@ -77,21 +78,22 @@ class Forge {
     modalDiv.style.zIndex = this.z++;
 
     modalDiv.innerHTML = `
-      <div class="modal-dialog" style="position:absolute;left:20vmin;top:20vmin;width:60vmin;height:75vmin;">
+      <div class="modal-dialog" style="position:absolute;left:20%;top:20%;width:60%;height:75%;">
         <div class="modal-content">
           <div class="modal-header">
-            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : node.type === 'doc' ? 'Document' : 'Note'}</div>
+            <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : 'Document'}</div>
             <div>
-              <button class="btn btn-sm text-warning" onclick="forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
-              <button class="btn btn-sm text-white" onclick="forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
-              <button class="btn btn-sm text-danger" onclick="forge.remove(${node.id})" title="Close">✕</button>
+              <button class="header-btn" onclick="forge.toggleMinimize(${node.id})" title="Minimize">−</button>
+              <button class="header-btn" onclick="forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
+              <button class="header-btn close" onclick="forge.remove(${node.id})" title="Close">✕</button>
             </div>
           </div>
           <div class="content-area" id="content-${node.id}"></div>
+          ${node.type === 'agent' ? `
           <div class="input-group">
             <textarea class="truth-input" id="input-${node.id}" placeholder="Ask or write..."></textarea>
             <button class="send-btn" onclick="forge.send(${node.id})">➤</button>
-          </div>
+          </div>` : ''}
           <div class="resizer"></div>
         </div>
       </div>`;
@@ -110,7 +112,7 @@ class Forge {
     this.makeScrollable(node);
 
     if (node.type === 'agent') {
-      this.appendMessage(node, 'ai', "I'm connected to your real ai-proxy.");
+      this.appendMessage(node, 'ai', "I'm ready to assist you. Type your message below.");
     }
   }
 
@@ -122,6 +124,7 @@ class Forge {
       div.innerHTML = `
         <button class="copy-btn" onclick="forge.copyMessage(this)">⎘</button>
         <button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button>
+        <button class="stop-btn" onclick="forge.stopSpeech()">🔇</button>
         ${marked.parse(text)}
       `;
     } else {
@@ -134,7 +137,7 @@ class Forge {
 
   copyMessage(button) {
     const message = button.closest('.chat-message');
-    const text = message.textContent.replace('⎘', '').replace('🔊', '').trim();
+    const text = message.textContent.replace('⎘', '').replace('🔊', '').replace('🔇', '').trim();
     navigator.clipboard.writeText(text).then(() => {
       button.textContent = '✓';
       setTimeout(() => button.textContent = '⎘', 2000);
@@ -147,14 +150,33 @@ class Forge {
     }
 
     const message = button.closest('.chat-message');
-    const text = message.textContent.replace('⎘', '').replace('🔊', '').trim();
+    const text = message.textContent.replace('⎘', '').replace('🔊', '').replace('🔇', '').trim();
+
+    if (!text || !('speechSynthesis' in window)) return;
+
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
-    utterance.onend = () => button.style.display = 'inline-block';
+    utterance.onstart = () => {
+      button.style.display = 'none';
+      button.nextElementSibling.style.display = 'block';
+    };
+    utterance.onend = () => {
+      button.style.display = 'block';
+      button.nextElementSibling.style.display = 'none';
+    };
 
-    button.style.display = 'none';
     this.currentUtterance = utterance;
     speechSynthesis.speak(utterance);
+  }
+
+  stopSpeech() {
+    if (this.currentUtterance) {
+      speechSynthesis.cancel();
+      document.querySelectorAll('.tts-btn').forEach(btn => {
+        btn.style.display = 'block';
+        if (btn.nextElementSibling) btn.nextElementSibling.style.display = 'none';
+      });
+    }
   }
 
   async send(id) {
@@ -179,6 +201,7 @@ class Forge {
       node.contentEl.lastChild.innerHTML = `
         <button class="copy-btn" onclick="forge.copyMessage(this)">⎘</button>
         <button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button>
+        <button class="stop-btn" onclick="forge.stopSpeech()">🔇</button>
         ${marked.parse(answer)}
       `;
       node.contentEl.scrollTop = node.contentEl.scrollHeight;
@@ -191,18 +214,33 @@ class Forge {
   makeDraggable(node) {
     const header = node.modal._dialog.querySelector('.modal-header');
     let pos = {};
+    let isDragging = false;
+
     const move = (e) => {
-      const x = e.clientX || e.touches?.[0]?.clientX;
-      const y = e.clientY || e.touches?.[0]?.clientY;
-      node.dialog.style.left = `${parseFloat(node.dialog.style.left || 20) + (x - pos.x)/innerWidth*100}vmin`;
-      node.dialog.style.top = `${parseFloat(node.dialog.style.top || 20) + (y - pos.y)/innerHeight*100}vmin`;
+      if (!isDragging) return;
+      const x = e.clientX || e.touches[0].clientX;
+      const y = e.clientY || e.touches[0].clientY;
+
+      const newLeft = (parseFloat(node.dialog.style.left || 20) + (x - pos.x)/window.innerWidth*100);
+      const newTop = (parseFloat(node.dialog.style.top || 20) + (y - pos.y)/window.innerHeight*100);
+
+      node.dialog.style.left = `${Math.max(0, Math.min(100 - parseFloat(node.dialog.style.width || 60), newLeft))}%`;
+      node.dialog.style.top = `${Math.max(0, Math.min(100 - parseFloat(node.dialog.style.height || 75), newTop))}%`;
+
       pos = { x, y };
     };
+
     header.addEventListener('pointerdown', (e) => {
       if (e.target.tagName === 'BUTTON') return;
-      pos = { x: e.clientX || e.touches?.[0].clientX, y: e.clientY || e.touches?.[0]?.clientY };
+      isDragging = true;
+      pos = { x: e.clientX || e.touches[0].clientX, y: e.clientY || e.touches[0].clientY };
+      header.style.cursor = 'grabbing';
       document.addEventListener('pointermove', move);
-      document.addEventListener('pointerup', () => document.removeEventListener('pointermove', move));
+      document.addEventListener('pointerup', () => {
+        isDragging = false;
+        header.style.cursor = '';
+        document.removeEventListener('pointermove', move);
+      });
     });
   }
 
@@ -210,8 +248,12 @@ class Forge {
     const resizer = node.dialog.querySelector('.resizer');
     let pos = {};
     const resize = (e) => {
-      node.dialog.style.width = `${parseFloat(node.dialog.style.width || 60) + (e.clientX - pos.x)/innerWidth*100}vmin`;
-      node.dialog.style.height = `${parseFloat(node.dialog.style.height || 75) + (e.clientY - pos.y)/innerHeight*100}vmin`;
+      const newWidth = parseFloat(node.dialog.style.width || 60) + (e.clientX - pos.x)/window.innerWidth*100;
+      const newHeight = parseFloat(node.dialog.style.height || 75) + (e.clientY - pos.y)/window.innerHeight*100;
+
+      node.dialog.style.width = `${Math.max(20, Math.min(100, newWidth))}%`;
+      node.dialog.style.height = `${Math.max(20, Math.min(100, newHeight))}%`;
+
       pos = { x: e.clientX, y: e.clientY };
     };
     resizer.addEventListener('pointerdown', (e) => {
