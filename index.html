@@ -49,7 +49,6 @@
       flex-shrink: 0;
       user-select: none;
       touch-action: none;
-      -webkit-user-select: none;
     }
 
     .modal-header:active {
@@ -63,6 +62,26 @@
       margin: 0;
       flex: 1;
       text-align: center;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 5px;
+      z-index: 10;
+    }
+
+    .header-buttons button {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid #facc15;
+      color: #facc15;
+      border-radius: 4px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
     }
 
     .content-area {
@@ -94,7 +113,7 @@
       border: 2px solid #facc15;
       border-radius: 32px;
       color: #fff;
-      padding: 20px 80px 20px 20px;
+      padding: 20px;
       font-size: 18px;
       resize: none;
       outline: none;
@@ -103,15 +122,15 @@
 
     .send-btn {
       position: absolute;
-      right: 20px;
-      bottom: 20px;
-      width: 55px;
-      height: 55px;
+      right: 30px;
+      bottom: 30px;
+      width: 50px;
+      height: 50px;
       background: #facc15;
       color: #000;
       border: none;
       border-radius: 50%;
-      font-size: 24px;
+      font-size: 20px;
       font-weight: 900;
       cursor: pointer;
       box-shadow: 0 4px 20px rgba(250, 204, 21, .5);
@@ -262,12 +281,6 @@
       position: absolute;
       will-change: transform;
       transition: opacity 0.1s ease;
-      touch-action: none;
-    }
-
-    .modal-header button {
-      z-index: 2;
-      position: relative;
     }
 
     .modal-header::after {
@@ -350,10 +363,10 @@ class Forge {
         <div class="modal-content">
           <div class="modal-header">
             <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : node.type === 'doc' ? 'Document' : 'Note'}</div>
-            <div>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
-              <button class="btn btn-sm" onclick="event.stopPropagation(); forge.remove(${node.id})" title="Close">✕</button>
+            <div class="header-buttons">
+              <button onclick="forge.toggleMinimize(${node.id})" title="Minimize">🗕</button>
+              <button onclick="forge.toggleFS(${node.id})" title="Fullscreen">⛶</button>
+              <button onclick="forge.remove(${node.id})" title="Close">✕</button>
             </div>
           </div>
           <div class="content-area" id="content-${node.id}"></div>
@@ -379,7 +392,7 @@ class Forge {
     this.makeScrollable(node);
 
     if (node.type === 'agent') {
-      this.appendMessage(node, 'ai', "I'm connected to your real ai-proxy.");
+      this.appendMessage(node, 'ai', "I'm ready to assist you. Type your message below.");
     }
   }
 
@@ -392,10 +405,10 @@ class Forge {
         <button class="copy-btn" onclick="forge.copyMessage(this)" title="Copy">⎘</button>
         <button class="tts-btn" onclick="forge.speakMessage(this)" title="Speak">🔊</button>
         <button class="stop-btn" onclick="forge.stopSpeaking()" title="Stop">⏹️</button>
-        ${marked.parse(text)}
+        <div class="message-content">${marked.parse(text)}</div>
       `;
     } else {
-      div.innerHTML = marked.parse(text);
+      div.innerHTML = `<div class="message-content">${marked.parse(text)}</div>`;
     }
 
     node.contentEl.appendChild(div);
@@ -403,12 +416,8 @@ class Forge {
   }
 
   copyMessage(button) {
-    const message = button.closest('.chat-message');
-    const text = message.textContent
-      .replace('⎘', '')
-      .replace('🔊', '')
-      .replace('⏹️', '')
-      .trim();
+    const message = button.closest('.chat-message').querySelector('.message-content');
+    const text = message.textContent.trim();
 
     navigator.clipboard.writeText(text)
       .then(() => {
@@ -423,12 +432,8 @@ class Forge {
       speechSynthesis.cancel();
     }
 
-    const message = button.closest('.chat-message');
-    const text = message.textContent
-      .replace('⎘', '')
-      .replace('🔊', '')
-      .replace('⏹️', '')
-      .trim();
+    const message = button.closest('.chat-message').querySelector('.message-content');
+    const text = message.textContent.trim();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1.0;
@@ -467,23 +472,30 @@ class Forge {
 
     this.appendMessage(node, 'user', query);
     node.input.value = '';
-    this.appendMessage(node, 'ai', 'thinking...');
+    this.appendMessage(node, 'ai', 'Thinking...');
 
     try {
       const res = await fetch("https://ai-proxy.ai-n.workers.dev/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: query, sessionId: this.sessionId })
+        body: JSON.stringify({
+          message: query,
+          sessionId: this.sessionId
+        })
       });
-      const data = await res.json();
-      const answer = data.response || data.answer || "no response";
 
-      // Remove the "thinking..." message
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+      const data = await res.json();
+      const answer = data.response || data.answer || "Sorry, I couldn't generate a response.";
+
+      // Remove the "Thinking..." message
       node.contentEl.removeChild(node.contentEl.lastChild);
       this.appendMessage(node, 'ai', answer);
 
     } catch (e) {
-      node.contentEl.lastChild.textContent = "error: " + e.message;
+      console.error("Error:", e);
+      node.contentEl.lastChild.textContent = "Error: " + e.message;
     }
   }
 
@@ -564,11 +576,6 @@ class Forge {
     document.addEventListener('pointermove', move);
     document.addEventListener('pointerup', endDrag);
     document.addEventListener('pointercancel', endDrag);
-
-    // Prevent default touch behavior
-    header.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-    }, { passive: false });
   }
 
   makeResizable(node) {
@@ -626,26 +633,29 @@ class Forge {
     const node = this.nodes.find(n => n.id === id);
     if (node) {
       node.modal._element.classList.toggle('modal-fs');
+
       if (node.modal._element.classList.contains('modal-fs')) {
-        // Store original position before fullscreen
-        node.originalPosition = {
+        // Store original dimensions
+        node.originalDimensions = {
           left: node.dialog.style.left,
           top: node.dialog.style.top,
           width: node.dialog.style.width,
           height: node.dialog.style.height
         };
+
+        // Apply fullscreen
         node.dialog.style.left = '0';
         node.dialog.style.top = '0';
         node.dialog.style.width = '100%';
         node.dialog.style.height = '100%';
-        node.dialog.style.transform = '';
+        node.dialog.style.transform = 'none';
       } else {
-        // Restore original position
-        if (node.originalPosition) {
-          node.dialog.style.left = node.originalPosition.left;
-          node.dialog.style.top = node.originalPosition.top;
-          node.dialog.style.width = node.originalPosition.width;
-          node.dialog.style.height = node.originalPosition.height;
+        // Restore original dimensions
+        if (node.originalDimensions) {
+          node.dialog.style.left = node.originalDimensions.left;
+          node.dialog.style.top = node.originalDimensions.top;
+          node.dialog.style.width = node.originalDimensions.width;
+          node.dialog.style.height = node.originalDimensions.height;
         }
       }
     }
@@ -664,7 +674,7 @@ class Forge {
   }
 
   clear() {
-    if (confirm('Clear yard?')) {
+    if (confirm('Clear all nodes?')) {
       this.nodes.forEach(n => this.remove(n.id));
     }
   }
