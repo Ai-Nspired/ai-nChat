@@ -278,6 +278,18 @@
     .resizing {
       outline: 2px dashed #facc15;
     }
+
+    .resize-indicator {
+      position: absolute;
+      pointer-events: none;
+      z-index: 30;
+      font-size: 14px;
+      color: #facc15;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -307,6 +319,9 @@ class Forge {
     this.startWidth = 0;
     this.startHeight = 0;
     this.initialDistance = 0;
+    this.initialAngle = 0;
+    this.resizeMode = 'proportional';
+    this.touches = [];
   }
 
   create(type) {
@@ -332,6 +347,7 @@ class Forge {
         <div class="modal-content">
           <div class="drag-handle">⋮⋮</div>
           <div class="drag-indicator"></div>
+          <div class="resize-indicator"></div>
           <div class="modal-header">
             <div class="modal-title" contenteditable="true">${node.type === 'agent' ? 'AI Agent' : 'Document'}</div>
             <div>
@@ -358,6 +374,7 @@ class Forge {
     node.dialog = modalDiv.querySelector('.modal-dialog');
     node.handle = modalDiv.querySelector('.drag-handle');
     node.indicator = modalDiv.querySelector('.drag-indicator');
+    node.resizeIndicator = modalDiv.querySelector('.resize-indicator');
     node.header = modalDiv.querySelector('.modal-header');
     node.content = modalDiv.querySelector('.modal-content');
 
@@ -381,12 +398,14 @@ class Forge {
     // Touch events for pinch to resize
     node.content.addEventListener('touchstart', (e) => {
       if (e.touches.length === 2) {
+        this.touches = Array.from(e.touches);
         this.startResize(node, e);
       }
     }, { passive: false });
 
     node.content.addEventListener('touchmove', (e) => {
       if (this.isResizing && e.touches.length === 2) {
+        this.touches = Array.from(e.touches);
         this.resize(node, e);
       }
     }, { passive: false });
@@ -453,38 +472,72 @@ class Forge {
     node.dialog.classList.add('resizing');
     node.header.style.display = 'flex';
 
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
+    const touch1 = this.touches[0];
+    const touch2 = this.touches[1];
+
     this.initialDistance = Math.hypot(
       touch1.clientX - touch2.clientX,
       touch1.clientY - touch2.clientY
     );
 
+    this.initialAngle = Math.atan2(
+      touch2.clientY - touch1.clientY,
+      touch2.clientX - touch1.clientX
+    ) * 180 / Math.PI;
+
     const rect = node.dialog.getBoundingClientRect();
     this.startWidth = rect.width;
     this.startHeight = rect.height;
+    this.startX = rect.left;
+    this.startY = rect.top;
+
+    // Determine resize mode based on initial angle
+    if (Math.abs(this.initialAngle) < 30 || Math.abs(this.initialAngle) > 150) {
+      this.resizeMode = 'horizontal';
+      node.resizeIndicator.textContent = '↔️ Horizontal';
+    } else if (Math.abs(this.initialAngle) > 60 && Math.abs(this.initialAngle) < 120) {
+      this.resizeMode = 'vertical';
+      node.resizeIndicator.textContent = '↕️ Vertical';
+    } else {
+      this.resizeMode = 'proportional';
+      node.resizeIndicator.textContent = '⤡ Proportional';
+    }
+
+    node.resizeIndicator.style.display = 'block';
   }
 
   resize(node, e) {
     e.preventDefault();
-    const touch1 = e.touches[0];
-    const touch2 = e.touches[1];
+    const touch1 = this.touches[0];
+    const touch2 = this.touches[1];
+
     const currentDistance = Math.hypot(
       touch1.clientX - touch2.clientX,
       touch1.clientY - touch2.clientY
     );
 
     const scale = currentDistance / this.initialDistance;
-    const newWidth = this.startWidth * scale;
-    const newHeight = this.startHeight * scale;
 
-    node.dialog.style.width = `${Math.max(300, newWidth)}px`;
-    node.dialog.style.height = `${Math.max(200, newHeight)}px`;
+    if (this.resizeMode === 'proportional') {
+      const newWidth = this.startWidth * scale;
+      const newHeight = this.startHeight * scale;
+      node.dialog.style.width = `${Math.max(300, newWidth)}px`;
+      node.dialog.style.height = `${Math.max(200, newHeight)}px`;
+    }
+    else if (this.resizeMode === 'horizontal') {
+      const newWidth = this.startWidth * scale;
+      node.dialog.style.width = `${Math.max(300, newWidth)}px`;
+    }
+    else if (this.resizeMode === 'vertical') {
+      const newHeight = this.startHeight * scale;
+      node.dialog.style.height = `${Math.max(200, newHeight)}px`;
+    }
   }
 
   endResize() {
     if (this.isResizing) {
       this.activeNode.dialog.classList.remove('resizing');
+      this.activeNode.resizeIndicator.style.display = 'none';
       this.isResizing = false;
       this.activeNode = null;
     }
