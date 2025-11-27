@@ -1,310 +1,112 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>ai-n Forge | Modal Yard</title>
+  <title>ai-n Forge | Modal Yard (Fixed)</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
-    body {
-      background: #000;
-      color: #fff;
-      overflow: hidden;
-      height: 100dvh;
-      margin: 0;
-      font-family: system-ui;
-      touch-action: none;
-    }
-
-.yard {
-  position: fixed;
-  inset: 0;
-  margin: auto;
-  width: 92vmin;
-  height: 92vmin;
-  border: 3px solid rgba(250, 204, 21, .2);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.modal-content {
-  background: rgba(10, 10, 20, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(250, 204, 21, 0.2);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 0;
-  overflow: hidden;
-}
-
-.modal-header {
-  background: rgba(30, 30, 50, 0.6);
-  border-bottom: 1px solid rgba(250, 204, 21, 0.2);
-  padding: 12px 15px;
-  display: none;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-title {
-  font-size: 18px;
-  font-weight: 400;
-  color: #fff;
-  margin: 0;
-  flex: 1;
-  text-align: center;
-}
-
-.content-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 15px;
-  background: rgba(10, 10, 20, 0.4);
-}
-
-.content-area::-webkit-scrollbar {
-  width: 6px;
-}
-
-.content-area::-webkit-scrollbar-thumb {
-  background: #facc15;
-  border-radius: 3px;
-}
-
-.input-group {
-  position: relative;
-  padding: 0 15px 15px;
-  flex-shrink: 0;
-}
-
-.truth-input {
-  width: 100%;
-  height: 100px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(250, 204, 21, 0.3);
-  border-radius: 16px;
-  color: #fff;
-  padding: 12px 60px 12px 15px;
-  font-size: 16px;
-  resize: none;
-  outline: none;
-  font-family: monospace;
-}
-
-.send-btn {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  width: 40px;
-  height: 40px;
-  background: #facc15;
-  color: #000;
-  border: none;
-  border-radius: 50%;
-  font-size: 18px;
-  font-weight: 900;
-  cursor: pointer;
-}
-
-.forgebar {
-  position: fixed;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(30, 30, 50, 0.95);
-  border: 2px solid #facc15;
-  border-radius: 16px;
-  padding: 16px 8px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.forgebar button {
-  background: transparent;
-  border: none;
-  color: #facc15;
-  font-size: 28px;
-  cursor: pointer;
-}
-
-.forgebar button:hover {
-  color: #fff;
-  transform: scale(1.2);
-}
-
-#count {
-  writing-mode: vertical-rl;
-  font-weight: 900;
-  color: #facc15;
-  font-size: 18px;
-}
-
-.minimized .content-area,
-.minimized .input-group {
-  display: none !important;
-}
-
-.minimized .modal-dialog {
-  width: max-content !important;
-  height: 40px !important;
-  min-width: 150px !important;
-}
-
-.chat-message {
-  margin: 8px 0;
-  padding: 10px;
-  border-radius: 8px;
-  max-width: 95%;
-  position: relative;
-}
-
-.user {
-  background: rgba(59, 130, 246, 0.15);
-  margin-left: auto;
-  border-left: 3px solid #3b82f6;
-}
-
-.ai {
-  background: rgba(250, 204, 21, 0.1);
-  border-left: 3px solid #facc15;
-  position: relative;
-}
-
-.modal-fs .modal-dialog {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  max-width: none !important;
-  margin: 0 !important;
-  background: #000;
-}
-
-.copy-btn,
-.tts-btn,
-.stop-btn {
-  position: absolute;
-  top: 3px;
-  background: #facc15;
-  color: #000;
-  border: none;
-  border-radius: 3px;
-  padding: 1px 4px;
-  font-size: 10px;
-  cursor: pointer;
-}
-
-.copy-btn {
-  right: 3px;
-}
-
-.tts-btn {
-  right: 25px;
-}
-
-.stop-btn {
-  right: 47px;
-  display: none;
-}
-
-.header-btn {
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 3px;
-}
-
-.header-btn.minimize {
-  color: #facc15;
-}
-
-.header-btn.close {
-  color: #ff4444;
-}
-
-.header-btn.fullscreen {
-  color: #fff;
-}
-
-.drag-handle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 30px;
-  height: 30px;
-  background: rgba(250, 204, 21, 0.3);
-  border-radius: 0 0 8px 0;
-  cursor: move;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  color: rgba(250, 204, 21, 0.8);
-  transition: all 0.2s;
-}
-
-.drag-handle:hover {
-  background: rgba(250, 204, 21, 0.5);
-}
-
-.drag-handle.active {
-  background: #facc15;
-  color: #000;
-}
-
-.drag-indicator {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 2px dashed #facc15;
-  border-radius: 8px;
-  pointer-events: none;
-  z-index: 20;
-  display: none;
-}
-
-.resizing {
-  outline: 2px dashed #facc15;
-}
-
-.resize-indicator {
-  position: absolute;
-  pointer-events: none;
-  z-index: 30;
-  font-size: 14px;
-  color: #facc15;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 4px 8px;
-  border-radius: 4px;
-  display: none;
-}
-
-</style>
+    body { background:#000; color:#fff; overflow:hidden; height:100dvh; margin:0; font-family:system-ui; touch-action:none; }
+    .yard{position:fixed;inset:0;margin:auto;width:92vmin;height:92vmin;border:3px solid rgba(250,204,21,.2);pointer-events:none;z-index:1}
+    .modal-content{background:rgba(10,10,20,.8);backdrop-filter:blur(10px);border:1px solid rgba(250,204,21,.2);border-radius:8px;display:flex;flex-direction:column;height:100%;padding:0;overflow:hidden}
+    .modal-header{background:rgba(30,30,50,.6);border-bottom:1px solid rgba(250,204,21,.2);padding:12px 15px;display:none;justify-content:space-between;align-items:center}
+    .modal-title{font-size:18px;font-weight:400;color:#fff;margin:0;flex:1;text-align:center}
+    .content-area{flex:1;overflow-y:auto;padding:15px;background:rgba(10,10,20,.4)}
+    .input-group{position:relative;padding:0 15px 15px;flex-shrink:0}
+    .truth-input{width:100%;height:100px;background:rgba(0,0,0,.3);border:1px solid rgba(250,204,21,.3);border-radius:16px;color:#fff;padding:12px 60px 12px 15px;font-size:16px;resize:none;outline:none;font-family:monospace}
+    .send-btn{position:absolute;right:20px;bottom:20px;width:40px;height:40px;background:#facc15;color:#000;border:none;border-radius:50%;font-size:18px;font-weight:900;cursor:pointer}
+    .forgebar{position:fixed;left:12px;top:50%;transform:translateY(-50%);background:rgba(30,30,50,.95);border:2px solid #facc15;border-radius:16px;padding:16px 8px;z-index:1000;display:flex;flex-direction:column;gap:20px}
+    .forgebar button{background:transparent;border:none;color:#facc15;font-size:28px;cursor:pointer}
+    .forgebar button:hover{color:#fff;transform:scale(1.2)}
+    #count{writing-mode:vertical-rl;font-weight:900;color:#facc15;font-size:18px}
+    .chat-message{margin:8px 0;padding:10px;border-radius:8px;max-width:95%;position:relative;white-space:pre-wrap}
+    .user{background:rgba(59,130,246,.15);margin-left:auto;border-left:3px solid #3b82f6}
+    .ai{background:rgba(250,204,21,.1);border-left:3px solid #facc15;position:relative}
+    .modal-fs .modal-dialog{position:fixed!important;top:0!important;left:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;margin:0!important;background:#000}
+    .copy-btn,.tts-btn,.stop-btn{position:absolute;top:3px;background:#facc15;color:#000;border:none;border-radius:3px;padding:1px 4px;font-size:10px;cursor:pointer}
+    .copy-btn{right:3px}.tts-btn{right:25px}.stop-btn{right:47px;display:none}
+    .drag-handle{position:absolute;top:0;left:0;width:30px;height:30px;background:rgba(250,204,21,.3);border-radius:0 0 8px 0;cursor:move;z-index:10;display:flex;align-items:center;justify-content:center;font-size:16px;color:rgba(250,204,21,.8);transition:all .2s}
+    .drag-handle.active{background:#facc15;color:#000}
+  </style>
 </head>
-</body>
+<body>
+  <div class="yard"></div>
 
-<div class="yard"></div>
-
-<div class="forgebar">
-  <button onclick="forge.create('agent')" title="AI Agent">🤖</button>
-  <button onclick="forge.create('code')" title="Code">⌨️</button>
-  <button onclick="forge.clear()" title="Clear All">🧹</button>
-  <div id="count">0</div>
-</div>
+  <div class="forgebar">
+    <button onclick="forge.create('agent')" title="AI Agent">🤖</button>
+    <button onclick="forge.create('code')" title="Code">⌨️</button>
+    <button onclick="forge.clear()" title="Clear All">🧹</button>
+    <div id="count">0</div>
+  </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+/* === CONFIG: change API_BASE once here ===
+   - Set it to your worker URL (include protocol), e.g. "http://localhost:8787" or "https://ai-proxy.ai-n.workers.dev"
+   - Or set to '' to use relative paths (/api/chat) if client & worker are same-origin.
+*/
+const API_BASE = "https://ai-proxy.ai-n.workers.dev"; // <- edit this line
+
+function fullPath(path) {
+  if (!API_BASE || API_BASE.trim() === '') return path.startsWith('/') ? path : '/' + path;
+  return API_BASE.replace(/\/+$/,'') + (path.startsWith('/') ? path : '/' + path);
+}
+
+/* Optional auth header helper (unused by default) */
+function getAuthHeader() {
+  return {}; // add Authorization header here if needed: { Authorization: 'Bearer ...' }
+}
+
+/* Streaming helpers (unchanged) */
+function isLikelyStream(res) {
+  const ct = (res.headers.get('content-type') || '').toLowerCase();
+  if (!res.body) return false;
+  if (ct.includes('text/event-stream') || ct.includes('application/stream+json') || ct.includes('application/x-ndjson') || ct.includes('json-seq')) return true;
+  if (ct.startsWith('text/') && !ct.includes('application/json')) return true;
+  return false;
+}
+async function pipeReaderToPre(node, reader) {
+  const decoder = new TextDecoder();
+  let last = node.contentEl.lastChild;
+  if (!last) { node.contentEl.appendChild(document.createElement('div')); last = node.contentEl.lastChild; }
+  last.innerHTML = `<button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button><pre class="stream-output"></pre>`;
+  const pre = last.querySelector('.stream-output');
+  let buf = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    buf += chunk;
+    if (buf.includes('\n')) {
+      const parts = buf.split(/\r?\n/);
+      buf = parts.pop();
+      for (const p of parts) {
+        if (!p) continue;
+        try { const obj = JSON.parse(p); pre.textContent += (obj.chunk ?? obj.text ?? JSON.stringify(obj)) + '\n'; }
+        catch { pre.textContent += p + '\n'; }
+        pre.scrollTop = pre.scrollHeight;
+      }
+    } else {
+      pre.textContent += chunk;
+      pre.scrollTop = pre.scrollHeight;
+    }
+  }
+  if (buf) {
+    try { const obj = JSON.parse(buf); pre.textContent += (obj.chunk ?? obj.text ?? JSON.stringify(obj)); }
+    catch { pre.textContent += buf; }
+  }
+}
+
+/* helper to POST including X-Session-ID and optional auth */
+async function doPost(path, bodyObj) {
+  const url = fullPath(path);
+  const headers = { "Content-Type": "application/json", "X-Session-ID": crypto.randomUUID(), ...getAuthHeader() };
+  console.log('[Forge] POST', url, bodyObj);
+  return fetch(url, { method: 'POST', headers, body: JSON.stringify(bodyObj) });
+}
+
+/* ===== Forge class (send uses fullPath/doPost) ===== */
 class Forge {
   constructor() {
     this.nodes = [];
@@ -369,6 +171,7 @@ class Forge {
     modal.show();
 
     node.modal = modal;
+    node.modalEl = modalDiv;
     node.contentEl = modalDiv.querySelector(`#content-${node.id}`);
     node.input = modalDiv.querySelector(`#input-${node.id}`);
     node.dialog = modalDiv.querySelector('.modal-dialog');
@@ -384,54 +187,19 @@ class Forge {
     if (node.type === 'agent') {
       this.appendMessage(node, 'ai', "Double-tap handle to move, pinch to resize");
     } else if (node.type === 'code') {
-      // Pre-fill a helpful code prompt
-      this.appendMessage(node, 'ai', "Type a code generation prompt or paste code and press send to generate/run. Example: `generate a JavaScript fetch with error handling`");
+      this.appendMessage(node, 'ai', "Type a code generation prompt or paste code and press send to generate/run.");
     } else {
       this.appendMessage(node, 'ai', "Double-tap handle to move, pinch to resize");
     }
   }
 
   setupInteractions(node) {
-    // Double tap to activate movement
-    node.handle.addEventListener('dblclick', (e) => {
-      e.preventDefault();
-      this.activateMovement(node);
-    });
-
-    // Touch events for pinch to resize
-    node.content.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 2) {
-        this.touches = Array.from(e.touches);
-        this.startResize(node, e);
-      }
-    }, { passive: false });
-
-    node.content.addEventListener('touchmove', (e) => {
-      if (this.isResizing && e.touches.length === 2) {
-        this.touches = Array.from(e.touches);
-        this.resize(node, e);
-      }
-    }, { passive: false });
-
-    node.content.addEventListener('touchend', () => {
-      this.endResize();
-    });
-
-    // Show header when interacting
-    node.handle.addEventListener('mousedown', () => {
-      node.header.style.display = 'flex';
-    });
-
-    // Hide header after interaction
-    document.addEventListener('mouseup', () => {
-      if (this.activeNode) {
-        setTimeout(() => {
-          if (!this.isDragging && !this.isResizing) {
-            this.activeNode.header.style.display = 'none';
-          }
-        }, 1000);
-      }
-    });
+    node.handle.addEventListener('dblclick', (e) => { e.preventDefault(); this.activateMovement(node); });
+    node.content.addEventListener('touchstart', (e) => { if (e.touches.length === 2) { this.touches = Array.from(e.touches); this.startResize(node, e); } }, { passive:false });
+    node.content.addEventListener('touchmove', (e) => { if (this.isResizing && e.touches.length === 2) { this.touches = Array.from(e.touches); this.resize(node, e); } }, { passive:false });
+    node.content.addEventListener('touchend', () => this.endResize());
+    node.handle.addEventListener('mousedown', () => { node.header.style.display = 'flex'; });
+    document.addEventListener('mouseup', () => { if (this.activeNode) setTimeout(()=>{ if (!this.isDragging && !this.isResizing) this.activeNode.header.style.display='none'; },1000); });
   }
 
   activateMovement(node) {
@@ -439,17 +207,15 @@ class Forge {
     node.handle.classList.add('active');
     node.indicator.style.display = 'block';
     node.header.style.display = 'flex';
-
     const move = (e) => {
       e.preventDefault();
       const rect = node.dialog.getBoundingClientRect();
-      const clientX = e.clientX || e.touches[0].clientX;
-      const clientY = e.clientY || e.touches[0].clientY;
-
+      const clientX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0] && e.touches[0].clientY);
+      if (clientX == null || clientY == null) return;
       node.dialog.style.left = `${clientX - rect.width/2}px`;
       node.dialog.style.top = `${clientY - 15}px`;
     };
-
     const up = () => {
       node.handle.classList.remove('active');
       node.indicator.style.display = 'none';
@@ -460,7 +226,6 @@ class Forge {
       this.activeNode = null;
       this.isDragging = false;
     };
-
     document.addEventListener('mousemove', move);
     document.addEventListener('mouseup', up);
     document.addEventListener('touchmove', move);
@@ -474,141 +239,46 @@ class Forge {
     this.isResizing = true;
     node.dialog.classList.add('resizing');
     node.header.style.display = 'flex';
-
-    const touch1 = this.touches[0];
-    const touch2 = this.touches[1];
-
-    this.initialDistance = Math.hypot(
-      touch1.clientX - touch2.clientX,
-      touch1.clientY - touch2.clientY
-    );
-
-    this.initialAngle = Math.atan2(
-      touch2.clientY - touch1.clientY,
-      touch2.clientX - touch1.clientX
-    ) * 180 / Math.PI;
-
+    const touch1 = this.touches[0], touch2 = this.touches[1];
+    this.initialDistance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
+    this.initialAngle = Math.atan2(touch2.clientY - touch1.clientY, touch2.clientX - touch1.clientX) * 180 / Math.PI;
     const rect = node.dialog.getBoundingClientRect();
-    this.startWidth = rect.width;
-    this.startHeight = rect.height;
-    this.startX = rect.left;
-    this.startY = rect.top;
-
-    // Determine resize mode based on initial angle
-    if (Math.abs(this.initialAngle) < 30 || Math.abs(this.initialAngle) > 150) {
-      this.resizeMode = 'horizontal';
-      node.resizeIndicator.textContent = '↔️ Horizontal';
-    } else if (Math.abs(this.initialAngle) > 60 && Math.abs(this.initialAngle) < 120) {
-      this.resizeMode = 'vertical';
-      node.resizeIndicator.textContent = '↕️ Vertical';
-    } else {
-      this.resizeMode = 'proportional';
-      node.resizeIndicator.textContent = '⚖️ Proportional';
-    }
-
-    node.resizeIndicator.style.display = 'block';
+    this.startWidth = rect.width; this.startHeight = rect.height; this.startX = rect.left; this.startY = rect.top;
+    if (Math.abs(this.initialAngle) < 30 || Math.abs(this.initialAngle) > 150) { this.resizeMode = 'horizontal'; node.resizeIndicator.textContent='↔️ Horizontal'; }
+    else if (Math.abs(this.initialAngle) > 60 && Math.abs(this.initialAngle) < 120) { this.resizeMode='vertical'; node.resizeIndicator.textContent='↕️ Vertical'; }
+    else { this.resizeMode='proportional'; node.resizeIndicator.textContent='⚖️ Proportional'; }
+    node.resizeIndicator.style.display='block';
   }
 
-  resize(node, e) {
+  resize(node,e) {
     e.preventDefault();
-    const touch1 = this.touches[0];
-    const touch2 = this.touches[1];
-
-    const currentDistance = Math.hypot(
-      touch1.clientX - touch2.clientX,
-      touch1.clientY - touch2.clientY
-    );
-
+    const touch1 = this.touches[0], touch2 = this.touches[1];
+    const currentDistance = Math.hypot(touch1.clientX - touch2.clientX, touch1.clientY - touch2.clientY);
     const scale = currentDistance / this.initialDistance;
-
     if (this.resizeMode === 'proportional') {
-      const newWidth = this.startWidth * scale;
-      const newHeight = this.startHeight * scale;
-      node.dialog.style.width = `${Math.max(300, newWidth)}px`;
-      node.dialog.style.height = `${Math.max(200, newHeight)}px`;
-    }
-    else if (this.resizeMode === 'horizontal') {
-      const newWidth = this.startWidth * scale;
-      node.dialog.style.width = `${Math.max(300, newWidth)}px`;
-    }
-    else if (this.resizeMode === 'vertical') {
-      const newHeight = this.startHeight * scale;
-      node.dialog.style.height = `${Math.max(200, newHeight)}px`;
+      const newWidth = this.startWidth * scale, newHeight = this.startHeight * scale;
+      node.dialog.style.width = `${Math.max(300,newWidth)}px`; node.dialog.style.height = `${Math.max(200,newHeight)}px`;
+    } else if (this.resizeMode === 'horizontal') {
+      const newWidth = this.startWidth * scale; node.dialog.style.width = `${Math.max(300,newWidth)}px`;
+    } else if (this.resizeMode === 'vertical') {
+      const newHeight = this.startHeight * scale; node.dialog.style.height = `${Math.max(200,newHeight)}px`;
     }
   }
 
-  endResize() {
-    if (this.isResizing) {
-      this.activeNode.dialog.classList.remove('resizing');
-      this.activeNode.resizeIndicator.style.display = 'none';
-      this.isResizing = false;
-      this.activeNode = null;
-    }
-  }
+  endResize() { if (this.isResizing) { this.activeNode.dialog.classList.remove('resizing'); this.activeNode.resizeIndicator.style.display='none'; this.isResizing=false; this.activeNode=null; } }
 
   appendMessage(node, role, text) {
-    const div = document.createElement('div');
-    div.className = `chat-message ${role}`;
-
-    if (role === 'ai') {
-      div.innerHTML = `
-        <button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button>
-        <button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button>
-        <button class="stop-btn" onclick="forge.stopSpeech()">⏹</button>
-        ${marked.parse(text)}
-      `;
-    } else {
-      div.innerHTML = marked.parse(text);
-    }
-
-    node.contentEl.appendChild(div);
-    node.contentEl.scrollTop = node.contentEl.scrollHeight;
+    const div = document.createElement('div'); div.className = `chat-message ${role}`;
+    if (role === 'ai') div.innerHTML = `<button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button><button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button><button class="stop-btn" onclick="forge.stopSpeech()">⏹</button>${marked.parse(text)}`;
+    else div.innerHTML = marked.parse(text);
+    node.contentEl.appendChild(div); node.contentEl.scrollTop = node.contentEl.scrollHeight;
   }
 
-  copyMessage(button) {
-    const message = button.closest('.chat-message');
-    const text = message.textContent.replace(/[✂︎🔊⏹]/g, '').trim();
-    navigator.clipboard.writeText(text).then(() => {
-      const original = button.textContent;
-      button.textContent = '✓';
-      setTimeout(() => button.textContent = original, 2000);
-    });
-  }
+  copyMessage(button) { const message = button.closest('.chat-message'); const text = message.textContent.replace(/[✂︎🔊⏹]/g,'').trim(); navigator.clipboard.writeText(text).then(()=>{ const original=button.textContent; button.textContent='✓'; setTimeout(()=>button.textContent=original,2000); }); }
 
-  speakMessage(button) {
-    if (this.currentUtterance) {
-      speechSynthesis.cancel();
-    }
+  speakMessage(button) { if (this.currentUtterance) speechSynthesis.cancel(); const message = button.closest('.chat-message'); const text = message.textContent.replace(/[✂︎🔊⏹]/g,'').trim(); if (!text || !('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(text); u.rate=1.0; u.onstart=()=>{button.style.display='none'; button.nextElementSibling.style.display='block'}; u.onend=()=>{button.style.display='block'; button.nextElementSibling.style.display='none'}; this.currentUtterance=u; speechSynthesis.speak(u); }
 
-    const message = button.closest('.chat-message');
-    const text = message.textContent.replace(/[✂︎🔊⏹]/g, '').trim();
-
-    if (!text || !('speechSynthesis' in window)) return;
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
-    utterance.onstart = () => {
-      button.style.display = 'none';
-      button.nextElementSibling.style.display = 'block';
-    };
-    utterance.onend = () => {
-      button.style.display = 'block';
-      button.nextElementSibling.style.display = 'none';
-    };
-
-    this.currentUtterance = utterance;
-    speechSynthesis.speak(utterance);
-  }
-
-  stopSpeech() {
-    if (this.currentUtterance) {
-      speechSynthesis.cancel();
-      document.querySelectorAll('.tts-btn').forEach(btn => {
-        btn.style.display = 'block';
-        if (btn.nextElementSibling) btn.nextElementSibling.style.display = 'none';
-      });
-    }
-  }
+  stopSpeech(){ if(this.currentUtterance){ speechSynthesis.cancel(); document.querySelectorAll('.tts-btn').forEach(b=>{b.style.display='block'; if(b.nextElementSibling) b.nextElementSibling.style.display='none'}); } }
 
   async send(id) {
     const node = this.nodes.find(n => n.id === id);
@@ -616,118 +286,60 @@ class Forge {
     const query = node.input.value.trim();
     if (!query) return;
 
-    // user msg
     this.appendMessage(node, 'user', query);
     node.input.value = '';
+    this.appendMessage(node, 'ai', 'thinking...');
 
-    if (node.type === 'agent') {
-      // Chat behavior
-      this.appendMessage(node, 'ai', 'thinking...');
-
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: query, sessionId: this.sessionId })
-        });
-
-        let data;
-        try { data = await res.json(); } catch { data = await res.text(); }
-
-        const answer = data?.response || data?.answer || data?.reply || (typeof data === 'string' ? data : "no response");
-
-        node.contentEl.lastChild.innerHTML = `
-          <button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button>
-          <button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button>
-          <button class="stop-btn" onclick="forge.stopSpeech()">⏹</button>
-          ${marked.parse(answer)}
-        `;
-      } catch (e) {
-        node.contentEl.lastChild.textContent = "error: " + e.message;
-      }
-    } else if (node.type === 'code') {
-      // Code behavior: call /api/code and render returned code/output
-      this.appendMessage(node, 'ai', 'thinking...');
-      try {
-        const res = await fetch("/api/code", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            prompt: query,
-            sessionId: this.sessionId,
-            language: "javascript"
-          })
-        });
-
-        const text = await res.text();
-        let data;
-        try { data = JSON.parse(text); } catch { data = text; }
-
-        // Build markdown for rendering with marked
-        let md = '';
-        if (typeof data === 'string') {
-          md = '```text\n' + data + '\n```';
-        } else if (data?.code) {
-          const lang = data.language || 'javascript';
-          md = '```' + lang + '\n' + data.code + '\n```';
-          if (data.output) {
-            md += '\n\n**Output**\n\n```text\n' + (typeof data.output === 'string' ? data.output : JSON.stringify(data.output, null, 2)) + '\n```';
-          }
-        } else if (data?.output) {
-          md = '```text\n' + (typeof data.output === 'string' ? data.output : JSON.stringify(data.output, null, 2)) + '\n```';
+    try {
+      if (node.type === 'agent') {
+        const res = await doPost('/api/chat', { message: query, sessionId: this.sessionId });
+        if (!res) throw new Error('no response');
+        if (isLikelyStream(res) && res.body) {
+          const reader = res.body.getReader();
+          await pipeReaderToPre(node, reader);
         } else {
-          md = '```json\n' + JSON.stringify(data, null, 2) + '\n```';
+          const ct = (res.headers.get('content-type')||'').toLowerCase();
+          const data = ct.includes('application/json') ? await res.json() : await res.text();
+          const answer = data?.response || data?.answer || data?.reply || (typeof data === 'string' ? data : JSON.stringify(data,null,2));
+          node.contentEl.lastChild.innerHTML = `<button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button><button class="tts-btn" onclick="forge.speakMessage(this)">🔊</button><button class="stop-btn" onclick="forge.stopSpeech()">⏹</button>${marked.parse(answer)}`;
         }
-
-        node.contentEl.lastChild.innerHTML = `
-          <button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button>
-          ${marked.parse(md)}
-        `;
-      } catch (e) {
-        node.contentEl.lastChild.textContent = "error: " + e.message;
+      } else if (node.type === 'code') {
+        // IMPORTANT: send prompt field (not message)
+        const res = await doPost('/api/code', { prompt: query, sessionId: this.sessionId, language: 'javascript' });
+        if (!res) throw new Error('no response');
+        if (isLikelyStream(res) && res.body) {
+          const reader = res.body.getReader();
+          await pipeReaderToPre(node, reader);
+        } else {
+          const ct = (res.headers.get('content-type')||'').toLowerCase();
+          const data = ct.includes('application/json') ? await res.json() : await res.text();
+          let md = '';
+          if (typeof data === 'string') md = '```text\n' + data + '\n```';
+          else if (data?.code) { const lang = data.language||'javascript'; md = '```' + lang + '\n' + data.code + '\n```'; if (data.output) md += '\n\n**Output**\n\n```text\n' + (typeof data.output==='string'?data.output:JSON.stringify(data.output,null,2)) + '\n```'; }
+          else if (data?.output) md = '```text\n' + (typeof data.output==='string'?data.output:JSON.stringify(data.output,null,2)) + '\n```';
+          else md = '```json\n' + JSON.stringify(data,null,2) + '\n```';
+          node.contentEl.lastChild.innerHTML = `<button class="copy-btn" onclick="forge.copyMessage(this)">✂︎</button>${marked.parse(md)}`;
+        }
+      } else {
+        node.contentEl.lastChild.innerHTML = marked.parse(query);
       }
-    } else {
-      // Document fallback: just echo
-      this.appendMessage(node, 'ai', query);
+    } catch (err) {
+      try { node.contentEl.lastChild.textContent = "error: " + err.message; } catch {}
+      console.error('send error', err);
     }
 
     node.contentEl.scrollTop = node.contentEl.scrollHeight;
   }
 
-  makeScrollable(node) {
-    node.contentEl.style.overflowY = 'auto';
-  }
+  makeScrollable(node) { node.contentEl.style.overflowY = 'auto'; }
 
-  toggleMinimize(id) {
-    const node = this.nodes.find(n => n.id === id);
-    if (node) {
-      node.modal._element.classList.toggle('minimized');
-      this.updateCount();
-    }
-  }
+  toggleMinimize(id) { const node = this.nodes.find(n=>n.id===id); if(node) { node.modal._element.classList.toggle('minimized'); this.updateCount(); } }
 
-  toggleFS(id) {
-    const node = this.nodes.find(n => n.id === id);
-    if (node) {
-      node.modal._element.classList.toggle('modal-fs');
-    }
-  }
+  toggleFS(id) { const node = this.nodes.find(n=>n.id===id); if(node) { node.modal._element.classList.toggle('modal-fs'); node.dialog.style.zIndex = node.modal._element.classList.contains('modal-fs') ? 4000 : (this.z++); } }
 
-  remove(id) {
-    const node = this.nodes.find(n => n.id === id);
-    if (node) {
-      node.modal.hide();
-      setTimeout(() => {
-        node.modal._element.remove();
-        this.nodes = this.nodes.filter(n => n.id !== id);
-        this.updateCount();
-      }, 300);
-    }
-  }
+  remove(id) { const node = this.nodes.find(n=>n.id===id); if(node){ node.modal.hide(); setTimeout(()=>{ node.modal._element.remove(); this.nodes=this.nodes.filter(n=>n.id!==id); this.updateCount(); },300); } }
 
-  clear() {
-    if (confirm('Clear yard?')) this.nodes.forEach(n => this.remove(n.id));
-  }
+  clear() { if(confirm('Clear yard?')) this.nodes.forEach(n=>this.remove(n.id)); }
 }
 
 const forge = new Forge();
